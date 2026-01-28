@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './EclipseNavigation.css';
 
-const EclipseNavigation = () => {
+const EclipseNavigation = ({ onNavigate }) => { // Prop received here
   const [activeTab, setActiveTab] = useState('home');
 
   const navItems = ['shop', 'battle', 'home', 'leaderboard', 'settings'];
@@ -14,6 +14,17 @@ const EclipseNavigation = () => {
     Settings: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="nav-icon"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>,
     Leaderboard: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="nav-icon"><path d="M18 20V10"></path><path d="M12 20V4"></path><path d="M6 20v-6"></path></svg>,
     Shop: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="nav-icon"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+  };
+
+  const handleTabClick = (item) => {
+    setActiveTab(item);
+    
+    // Logic for navigation
+    if (item === 'home') {
+      onNavigate('selection');
+    } else if (item === 'settings') {
+      onNavigate('settings');
+    }
   };
 
   return (
@@ -35,7 +46,7 @@ const EclipseNavigation = () => {
             <div 
               key={item}
               className={`dock-item ${item} ${activeTab === item ? 'active' : ''}`}
-              onClick={() => setActiveTab(item)}
+              onClick={() => handleTabClick(item)}
             >
               <div className="dock-icon-wrapper">
                 {item === 'home' && Icons.Home}
@@ -45,16 +56,11 @@ const EclipseNavigation = () => {
                 {item === 'settings' && Icons.Settings}
               </div>
               
-              {/* --- THE SUPER-CHARGED PLASMA JET --- */}
               <div className="plasma-jet">
-                 {/* The White Hot Center (Temperature: 10,000K) */}
                  <div className="jet-core-white"></div>
-                 {/* The Blue Plasma (Temperature: 5,000K) */}
                  <div className="jet-layer-blue"></div>
-                 {/* The Outer Radiation (Glow) */}
                  <div className="jet-flash"></div>
               </div>
-
             </div>
           ))}
         </div>

@@ -3,7 +3,8 @@ import './EclipseStyles.css';
 import EclipseWorldMap from './EclipseWorldMap'; 
 import EclipseSelection from './EclipseSelection'; 
 import SpaceLogin from './SpaceLogin'; 
-import { supabase } from './supabaseClient'; // Added for session check
+import EclipseSettings from './EclipseSettings'; // Ensure this is imported
+import { supabase } from './supabaseClient';
 
 // Import your logos
 import logo1 from './logo1.jpeg';
@@ -65,21 +66,19 @@ const Typewriter = ({ text, onComplete }) => {
 const EclipseIntro = () => {
   const [step, setStep] = useState(0);
   const [isGlitching, setIsGlitching] = useState(false);
-  const [currentView, setCurrentView] = useState('loading'); // Initial loading state
+  const [currentView, setCurrentView] = useState('loading');
   const [textFinished, setTextFinished] = useState(false);
 
-  // --- AUTH WATCHER ---
+  // Check auth on load
   useEffect(() => {
-    // Check initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        setCurrentView('selection'); // Skip intro/login if session exists
+        setCurrentView('selection');
       } else {
         setCurrentView('intro');
       }
     });
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
         setCurrentView('selection');
@@ -102,6 +101,9 @@ const EclipseIntro = () => {
   const current = flow[step];
   const progressPercent = ((step + 1) / flow.length) * 100;
 
+  // Navigation Helper
+  const navigate = (view) => setCurrentView(view);
+
   const handleNext = () => {
     setIsGlitching(true);
     playTypingSound(); 
@@ -116,9 +118,29 @@ const EclipseIntro = () => {
     }, 800); 
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setCurrentView('login');
+  };
+
   if (currentView === 'loading') return <div className="eclipse-main-wrapper">Initializing...</div>;
   if (currentView === 'map') return <EclipseWorldMap />;
-  if (currentView === 'selection') return <EclipseSelection onSelect={() => setCurrentView('map')} />;
+  
+  // Render Selection Page
+  if (currentView === 'selection') {
+    return <EclipseSelection onNavigate={navigate} />;
+  }
+
+  // Render Settings Page
+  if (currentView === 'settings') {
+    return (
+      <EclipseSettings 
+        onBack={() => navigate('selection')} 
+        onLogout={handleLogout} 
+      />
+    );
+  }
+
   if (currentView === 'login') return <SpaceLogin onLoginSuccess={() => setCurrentView('selection')} />;
 
   return (
