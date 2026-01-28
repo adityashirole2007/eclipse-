@@ -3,9 +3,10 @@
   --core-black: #000000;
   --plasma-cyan: #00f0ff; 
   --plasma-white: #ffffff;
+  --magic-blue: #0077ff; /* Deeper blue for magical depth */
 }
 
-/* --- TOP HUD (Unchanged) --- */
+/* --- TOP HUD (Dark Magic Theme) --- */
 .eclipse-hud-top {
   position: fixed;
   top: 20px;
@@ -17,26 +18,60 @@
   z-index: 1000;
   pointer-events: none;
 }
+
 .hud-stat {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: rgba(0, 0, 0, 0.9);
-  padding: 8px 16px;
-  border-radius: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 15px rgba(0,0,0,0.8);
+  gap: 12px;
+  
+  /* Glass-morphism: Transparent but blurs background */
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  padding: 10px 20px;
+  border-radius: 40px;
+  
+  /* Thick Glowing Border */
+  border: 2px solid var(--plasma-cyan);
+  box-shadow: 
+    0 0 15px rgba(0, 240, 255, 0.3), 
+    inset 0 0 8px rgba(0, 240, 255, 0.2),
+    0 10px 30px rgba(0, 0, 0, 0.5);
+    
   pointer-events: auto;
+  position: relative;
+  animation: statHum 4s ease-in-out infinite;
 }
-.stat-value { color: #fff; font-weight: 800; font-family: sans-serif; }
-.stat-icon-glow { width: 20px; color: #fff; }
-.hud-stat.hearts .stat-icon-glow { color: #ff2a2a; }
-.hud-stat.stardust .stat-icon-glow { color: #ffd700; }
 
-/* --- DOCK CONTAINER (Moved Down to 15px) --- */
+/* Color Overrides for specific stats */
+.hud-stat.hearts {
+  border-color: #ff2a2a;
+  box-shadow: 0 0 15px rgba(255, 42, 42, 0.3), inset 0 0 8px rgba(255, 42, 42, 0.2);
+}
+
+.hud-stat.stardust {
+  border-color: #ffd700;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3), inset 0 0 8px rgba(255, 215, 0, 0.2);
+}
+
+.stat-value { 
+  color: #fff; 
+  font-weight: 900; 
+  font-family: 'Orbitron', sans-serif; /* High-tech font recommended */
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.stat-icon-glow { 
+  width: 22px; 
+  filter: drop-shadow(0 0 5px currentColor);
+}
+
+/* --- DOCK CONTAINER --- */
 .eclipse-dock-container {
   position: fixed;
-  bottom: 15px; /* Low profile */
+  bottom: 15px; 
   left: 0;
   width: 100%;
   display: flex;
@@ -45,24 +80,45 @@
   pointer-events: none;
 }
 
-/* --- THE BLACK DOCK --- */
+/* --- THE TRANSPARENT MAGIC DOCK --- */
 .eclipse-dock {
   pointer-events: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  background: var(--core-black);
-  padding: 10px 25px;
+  
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  
+  padding: 12px 30px;
   border-radius: 24px;
-  border: 1px solid rgba(0, 240, 255, 0.1);
   
-  /* Intense Outer Glow on the dock itself */
+  /* Thick Sky Blue Glowing Border */
+  border: 2px solid var(--plasma-cyan);
   box-shadow: 
-    0 10px 40px rgba(0,0,0,1),
-    0 -5px 30px rgba(0, 240, 255, 0.1); 
+    0 0 15px rgba(0, 240, 255, 0.4),            
+    inset 0 0 10px rgba(0, 240, 255, 0.3),      
+    0 5px 40px rgba(0, 0, 0, 0.8);              
   
-  transform: translateY(0);
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Magic aura lick under the bottom bar */
+.eclipse-dock::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 10%;
+  width: 80%;
+  height: 10px;
+  background: var(--plasma-cyan);
+  filter: blur(12px);
+  opacity: 0.6;
+  z-index: -1;
+  animation: magicAura 3s infinite alternate;
 }
 
 /* --- DOCK ITEMS --- */
@@ -79,16 +135,14 @@
 }
 
 .dock-icon-wrapper {
-  color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.3);
   width: 24px;
   height: 24px;
   z-index: 10;
   transition: all 0.2s ease;
 }
 
-/* --- 10X INTENSITY PLASMA LOGIC --- */
-
-/* Wrapper for the gas */
+/* --- 10X INTENSITY MAGIC FLAMES --- */
 .plasma-jet {
   position: absolute;
   bottom: -5px;
@@ -96,48 +150,46 @@
   transform: translateX(-50%);
   width: 100%;
   height: 100%;
-  z-index: 1; /* Behind icon */
+  z-index: 1;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
 }
 
-/* LAYER 1: The White Hot Core (Super fast flicker) */
 .jet-core-white {
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 8px;
-  height: 8px;
+  width: 12px;
+  height: 12px;
   background: white;
   border-radius: 50%;
   filter: blur(2px);
-  /* This creates the blinding center */
   box-shadow: 
-    0 0 10px #fff, 
-    0 0 20px var(--plasma-cyan);
-  animation: ultraFlicker 0.05s infinite;
+    0 0 15px #fff, 
+    0 0 30px var(--plasma-cyan),
+    0 0 45px var(--magic-blue);
+  animation: ultraFlicker 0.04s infinite;
 }
 
-/* LAYER 2: The Massive Blue Pillar (The main flame) */
 .jet-layer-blue {
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%) scaleY(0.5);
-  width: 20px;
-  height: 60px; /* Tall flame */
-  background: linear-gradient(to top, var(--plasma-cyan), transparent);
-  filter: blur(6px);
-  opacity: 0.8;
+  width: 25px;
+  height: 70px;
+  background: linear-gradient(to top, 
+    var(--plasma-cyan) 0%, 
+    var(--magic-blue) 40%, 
+    transparent 100%);
+  filter: blur(8px);
+  opacity: 0.9;
   transform-origin: bottom center;
-  /* This creates the volume of the fire */
-  box-shadow: 0 0 20px var(--plasma-cyan);
-  animation: gasThrust 0.2s infinite alternate;
+  animation: gasThrust 0.15s infinite alternate;
 }
 
-/* LAYER 3: The Flash (Ambient light hitting the walls) */
 .jet-flash {
   position: absolute;
   bottom: 10px;
@@ -151,43 +203,28 @@
   animation: pulseGlow 1s infinite;
 }
 
-/* --- ACTIVE STATE TRIGGERS --- */
-
-.dock-item.active .plasma-jet {
-  opacity: 1;
-}
-
-/* When active, the icon turns pure white and floats high */
+/* --- ACTIVE STATE --- */
+.dock-item.active .plasma-jet { opacity: 1; }
 .dock-item.active .dock-icon-wrapper {
   color: #fff;
-  transform: translateY(-12px) scale(1.1); /* Floating higher on the gas */
-  /* Shadow behind the icon to separate it from the flame */
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,1)); 
+  transform: translateY(-18px) scale(1.2);
+  filter: drop-shadow(0 0 8px var(--plasma-cyan));
 }
 
-/* --- HOME BUTTON ADJUSTMENTS --- */
-.dock-item.home {
-  width: 70px;
-}
-.dock-item.home.active .plasma-jet .jet-layer-blue {
-  height: 80px; /* Bigger flame for home button */
-  width: 30px;
-}
-.dock-item.home.active .dock-icon-wrapper {
-  transform: translateY(-15px) scale(1.3);
-}
+.dock-item.home { width: 70px; }
+.dock-item.home.active .plasma-jet .jet-layer-blue { height: 90px; width: 35px; }
+.dock-item.home.active .dock-icon-wrapper { transform: translateY(-22px) scale(1.4); }
 
 /* --- ANIMATIONS --- */
-
 @keyframes ultraFlicker {
-  0% { opacity: 0.9; transform: translateX(-50%) scale(1); }
-  50% { opacity: 1; transform: translateX(-50%) scale(1.2); }
-  100% { opacity: 0.8; transform: translateX(-50%) scale(0.9); }
+  0% { opacity: 0.8; transform: translateX(-50%) scale(1); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.3) rotate(2deg); }
+  100% { opacity: 0.7; transform: translateX(-50%) scale(0.9) rotate(-2deg); }
 }
 
 @keyframes gasThrust {
-  0% { height: 50px; opacity: 0.7; filter: blur(6px); }
-  100% { height: 65px; opacity: 1; filter: blur(4px); }
+  0% { height: 55px; opacity: 0.8; filter: blur(7px); transform: translateX(-50%) scaleX(1); }
+  100% { height: 75px; opacity: 1; filter: blur(5px); transform: translateX(-50%) scaleX(1.2); }
 }
 
 @keyframes pulseGlow {
@@ -196,13 +233,17 @@
   100% { opacity: 0.3; transform: translateX(-50%) scale(1); }
 }
 
-/* --- MOBILE RESPONSIVENESS --- */
+@keyframes magicAura {
+  0% { transform: scaleX(0.9); opacity: 0.4; filter: blur(10px); }
+  100% { transform: scaleX(1.1); opacity: 0.7; filter: blur(15px); }
+}
+
+@keyframes statHum {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-3px) scale(1.02); }
+}
+
+/* --- MOBILE --- */
 @media (max-width: 600px) {
-  .eclipse-dock {
-    width: 95%;
-    max-width: 400px;
-    padding: 10px 10px;
-    gap: 0;
-    justify-content: space-around;
-  }
+  .eclipse-dock { width: 95%; max-width: 400px; padding: 10px; justify-content: space-around; }
 }

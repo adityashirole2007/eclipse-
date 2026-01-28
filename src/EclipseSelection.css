@@ -1,227 +1,108 @@
 :root {
   --neon-cyan: #00f7ff;
-  --bg-deep: #000000;
+  --bg-deep: #0b0214; /* Slightly purple-black for the theme */
+  --void-purple: #9d00ff;
 }
 
-/* --- THE COSMIC CONTAINER --- */
 .select-container {
   min-height: 100vh;
-  background: var(--bg-deep);
-  display: grid;
-  place-items: center; /* Hard center for all content */
-  position: relative;
-  overflow: hidden;
-  transition: filter 0.1s;
-}
-
-/* Lightning Strike */
-.storm-active {
-  filter: brightness(3.5) contrast(1.4) saturate(1.8);
-}
-
-/* --- SPACE FX LAYERS --- */
-.star-stream {
-  position: absolute; width: 100%; height: 200%;
-  background-image: radial-gradient(white 1.5px, transparent 1.5px);
-  background-size: 60px 60px;
-  opacity: 0.1;
-  animation: starWarp 40s linear infinite;
-}
-
-@keyframes starWarp {
-  from { transform: translateY(0); }
-  to { transform: translateY(-50%); }
-}
-
-/* --- THE UI LAYOUT --- */
-.select-content {
-  width: 100%;
+  background: radial-gradient(circle at center, #1a0533 0%, #000 100%);
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  z-index: 10;
-  padding: 20px;
+  overflow: hidden;
+  position: relative;
 }
 
-.select-title {
-  color: #fff;
-  font-weight: 950;
-  font-size: clamp(1.8rem, 8vw, 3.5rem);
-  letter-spacing: 6px;
-  text-shadow: 0 0 20px var(--neon-cyan);
-  margin-bottom: 60px;
-}
-
-/* --- THE CENTERED STAGE --- */
+/* --- THE STAGE --- */
 .selection-stage {
   position: relative;
-  width: 95vw; height: 95vw;
-  max-width: 500px; max-height: 500px;
+  width: 100%;
+  max-width: 900px;
+  height: 600px;
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: center; /* Perfect mobile centering */
 }
 
-/* Central Hub Locked */
+/* --- CENTRAL HUB (VOID SANCTUM) --- */
 .central-hub {
-  position: absolute;
-  width: 150px; height: 150px;
-  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  width: 280px;
   z-index: 20;
+  text-align: center;
 }
 
 .hub-img {
-  width: 100%; height: 100%; object-fit: contain;
-  filter: drop-shadow(0 0 30px var(--neon-cyan));
+  width: 100%;
+  filter: drop-shadow(0 0 20px var(--void-purple));
 }
 
-.hub-border {
-  position: absolute;
-  top: -10px; left: -10px; right: -10px; bottom: -10px;
-  border: 4px solid var(--neon-cyan);
-  border-radius: 50%;
-  box-shadow: 0 0 35px var(--neon-cyan), inset 0 0 20px var(--neon-cyan);
-  animation: hubRotate 5s linear infinite;
-}
-
-/* --- ORBITING CHOICE ORBS --- */
-.orbs-orbit {
-  position: absolute;
-  width: 100%; height: 100%;
-}
-
+/* --- SUBJECT ISLANDS (ORBS) --- */
 .choice-orb {
   position: absolute;
-  width: 105px; height: 105px;
-  background: rgba(20, 20, 20, 0.8);
-  backdrop-filter: blur(15px);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  width: 200px;
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   cursor: pointer;
-  transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.3s ease;
+  z-index: 25;
 }
 
-/* Symmetrical Positions */
-.top-left { top: 0; left: 0; }
-.top-right { top: 0; right: 0; }
-.bottom-left { bottom: 0; left: 0; }
-.bottom-right { bottom: 0; right: 0; }
-
 .choice-orb:hover {
-  transform: scale(1.25) rotate(5deg);
-  border-color: var(--accent);
-  box-shadow: 0 0 45px var(--accent);
+  transform: scale(1.1);
 }
 
 .orb-img-file {
-  width: 65%; height: 65%; object-fit: contain;
+  width: 100%;
+  height: auto;
   filter: drop-shadow(0 0 15px var(--accent));
 }
 
 .orb-name-tag {
-  color: #fff; font-weight: 900; font-size: 0.75rem;
-  margin-top: 5px; letter-spacing: 1.5px;
-  text-shadow: 0 0 10px var(--accent);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.1rem;
+  margin-top: -10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
-/* --- ANIMATIONS --- */
-@keyframes hubRotate { to { transform: rotate(360deg); } }
-
-@keyframes floatCrazy {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-20px) rotate(3deg); }
-}
-.float-crazy { animation: floatCrazy 3s ease-in-out infinite; }
-
-/* Entrance */
-.pop-entrance {
-  opacity: 0;
-  animation: orbPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  animation-delay: var(--delay);
+.orb-sub-text {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.8rem;
 }
 
-@keyframes orbPop {
-  from { opacity: 0; transform: scale(0) translateY(40px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
+/* Desktop Alignment: Radial X-Shape */
+.top-left { top: 0; left: 5%; }
+.top-right { top: 0; right: 5%; }
+.bottom-left { bottom: 0; left: 5%; }
+.bottom-right { bottom: 0; right: 5%; }
 
-/* --- MOBILE FIX --- */
-@media (max-width: 450px) {
-  .selection-stage { width: 92vw; height: 92vw; }
-  .central-hub { width: 120px; height: 120px; }
-  .choice-orb { width: 90px; height: 90px; }
-  
-  /* Slight offset to prevent edge-clipping on tiny screens */
-  .top-left { top: 2%; left: 2%; }
-  .top-right { top: 2%; right: 2%; }
-  .bottom-left { bottom: 2%; left: 2%; }
-  .bottom-right { bottom: 2%; right: 2%; }
-}
-/* --- HIGH INTENSITY METEOR STORM --- */
-.meteor-storm {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 1;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.meteor {
-  position: absolute;
-  width: 2px;
-  height: 80px;
-  background: linear-gradient(to bottom, #00f7ff, transparent);
-  box-shadow: 0 0 20px #00f7ff;
-  opacity: 0;
-  transform: rotate(-45deg);
-  animation: meteorRush 2s linear infinite;
-}
-
-/* Spreading Meteors Across the Screen */
-.m-1 { left: 5%; animation-delay: 0.1s; animation-duration: 1.5s; }
-.m-2 { left: 15%; animation-delay: 1.2s; animation-duration: 2s; }
-.m-3 { left: 25%; animation-delay: 0.5s; animation-duration: 1.8s; }
-.m-4 { left: 35%; animation-delay: 2.1s; animation-duration: 2.2s; }
-.m-5 { left: 45%; animation-delay: 0.8s; animation-duration: 1.6s; }
-.m-6 { left: 55%; animation-delay: 1.5s; animation-duration: 1.9s; }
-.m-7 { left: 65%; animation-delay: 0.3s; animation-duration: 2.1s; }
-.m-8 { left: 75%; animation-delay: 1.9s; animation-duration: 1.7s; }
-.m-9 { left: 85%; animation-delay: 0.6s; animation-duration: 2.3s; }
-.m-10 { left: 95%; animation-delay: 1.1s; animation-duration: 1.5s; }
-.m-11 { left: 10%; animation-delay: 2.5s; animation-duration: 2s; }
-.m-12 { left: 30%; animation-delay: 0.2s; animation-duration: 1.8s; }
-.m-13 { left: 50%; animation-delay: 1.7s; animation-duration: 2.2s; }
-.m-14 { left: 70%; animation-delay: 0.9s; animation-duration: 1.6s; }
-.m-15 { left: 90%; animation-delay: 2.2s; animation-duration: 1.9s; }
-.m-16 { left: 20%; animation-delay: 0.4s; animation-duration: 2.1s; }
-.m-17 { left: 40%; animation-delay: 1.3s; animation-duration: 1.7s; }
-.m-18 { left: 60%; animation-delay: 0.7s; animation-duration: 2.3s; }
-.m-19 { left: 80%; animation-delay: 1.8s; animation-duration: 1.5s; }
-.m-20 { left: 100%; animation-delay: 2.4s; animation-duration: 2s; }
-
-@keyframes meteorRush {
-  0% {
-    top: -10%;
-    transform: translateX(0) rotate(-45deg) scaleY(1);
-    opacity: 0;
+/* --- RESPONSIVE MOBILE VIEW --- */
+@media (max-width: 768px) {
+  .selection-stage {
+    height: 80vh;
+    transform: scale(0.8); /* Scale down for smaller screens */
   }
-  20% {
-    opacity: 1;
-    transform: translateX(100px) rotate(-45deg) scaleY(2);
+
+  .choice-orb {
+    width: 140px;
   }
-  100% {
-    top: 110%;
-    transform: translateX(1000px) rotate(-45deg) scaleY(1);
-    opacity: 0;
+
+  .central-hub {
+    width: 180px;
   }
+
+  /* Adjust spacing for mobile to prevent overlapping */
+  .top-left { top: 5%; left: 0%; }
+  .top-right { top: 5%; right: 0%; }
+  .bottom-left { bottom: 10%; left: 0%; }
+  .bottom-right { bottom: 10%; right: 0%; }
 }
 
-/* Meteors ignite during lightning */
-.storm-active .meteor {
-  filter: brightness(3) contrast(1.5);
-  height: 150px; /* Stretch further during flashes */
-}
+/* --- OPTIONAL: GLOWING CONNECTORS --- */
+/* You can add SVG lines in JS to act as the purple "web" connections seen in image 4 */
