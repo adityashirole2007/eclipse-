@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import './EclipseSelection.css';
+// Import the map component directly
+import EclipseWorldMap from './EclipseWorldMap'; 
+// Import the Navigation Bar
+import EclipseNavigation from './EclipseNavigation';
 
 // --- Assets ---
 import logo1 from './logo1.jpeg';
@@ -8,8 +12,10 @@ import choice2 from './logo2.1.jpeg';
 import choice3 from './logo3.1.jpeg';
 import choice4 from './logo4.1.jpeg';
 
-const EclipseSelection = ({ onSelect }) => {
+const EclipseSelection = () => {
   const [isThunder, setIsThunder] = useState(false);
+  // NEW: Add state to track if a selection has been made
+  const [showMap, setShowMap] = useState(false);
 
   useEffect(() => {
     const storm = setInterval(() => {
@@ -18,7 +24,7 @@ const EclipseSelection = ({ onSelect }) => {
       setTimeout(() => {
         setIsThunder(true);
         setTimeout(() => setIsThunder(false), 150);
-      }, 250);
+      }, 2500);
     }, 2500);
     return () => clearInterval(storm);
   }, []);
@@ -30,12 +36,17 @@ const EclipseSelection = ({ onSelect }) => {
     { id: 'phantom', img: choice4, label: "PHANTOM", color: '#00f7ff', pos: 'bottom-right' }
   ];
 
+  // If map is selected, render the Map Component
+  // (The Map component has its own EclipseNavigation inside it, see next file)
+  if (showMap) {
+    return <EclipseWorldMap />;
+  }
+
   return (
     <div className={`select-container ${isThunder ? 'storm-active' : ''}`}>
       
       {/* --- HIGH INTENSITY METEOR SHOWER --- */}
       <div className="meteor-storm">
-        {/* Generating 20 meteors for full-screen coverage */}
         {[...Array(20)].map((_, i) => (
           <div key={i} className={`meteor m-${i + 1}`}></div>
         ))}
@@ -68,7 +79,8 @@ const EclipseSelection = ({ onSelect }) => {
                 key={item.id} 
                 className={`choice-orb ${item.pos} pop-entrance`}
                 style={{ '--accent': item.color, '--delay': `${index * 0.1}s` }}
-                onClick={() => onSelect(item.id)}
+                // UPDATED: Trigger the state change here
+                onClick={() => setShowMap(true)} 
               >
                 <div className="orb-scanner-line"></div>
                 <div className="orb-aura"></div>
@@ -79,6 +91,9 @@ const EclipseSelection = ({ onSelect }) => {
           </div>
         </div>
       </div>
+
+      {/* --- ADDED NAVIGATION BAR --- */}
+      <EclipseNavigation />
     </div>
   );
 };

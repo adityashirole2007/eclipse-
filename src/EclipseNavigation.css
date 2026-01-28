@@ -1,0 +1,208 @@
+/* --- VARIABLES --- */
+:root {
+  --core-black: #000000;
+  --plasma-cyan: #00f0ff; 
+  --plasma-white: #ffffff;
+}
+
+/* --- TOP HUD (Unchanged) --- */
+.eclipse-hud-top {
+  position: fixed;
+  top: 20px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 1000;
+  pointer-events: none;
+}
+.hud-stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.9);
+  padding: 8px 16px;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0,0,0,0.8);
+  pointer-events: auto;
+}
+.stat-value { color: #fff; font-weight: 800; font-family: sans-serif; }
+.stat-icon-glow { width: 20px; color: #fff; }
+.hud-stat.hearts .stat-icon-glow { color: #ff2a2a; }
+.hud-stat.stardust .stat-icon-glow { color: #ffd700; }
+
+/* --- DOCK CONTAINER (Moved Down to 15px) --- */
+.eclipse-dock-container {
+  position: fixed;
+  bottom: 15px; /* Low profile */
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* --- THE BLACK DOCK --- */
+.eclipse-dock {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--core-black);
+  padding: 10px 25px;
+  border-radius: 24px;
+  border: 1px solid rgba(0, 240, 255, 0.1);
+  
+  /* Intense Outer Glow on the dock itself */
+  box-shadow: 
+    0 10px 40px rgba(0,0,0,1),
+    0 -5px 30px rgba(0, 240, 255, 0.1); 
+  
+  transform: translateY(0);
+}
+
+/* --- DOCK ITEMS --- */
+.dock-item {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.dock-icon-wrapper {
+  color: rgba(255, 255, 255, 0.2);
+  width: 24px;
+  height: 24px;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+/* --- 10X INTENSITY PLASMA LOGIC --- */
+
+/* Wrapper for the gas */
+.plasma-jet {
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* Behind icon */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+/* LAYER 1: The White Hot Core (Super fast flicker) */
+.jet-core-white {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  filter: blur(2px);
+  /* This creates the blinding center */
+  box-shadow: 
+    0 0 10px #fff, 
+    0 0 20px var(--plasma-cyan);
+  animation: ultraFlicker 0.05s infinite;
+}
+
+/* LAYER 2: The Massive Blue Pillar (The main flame) */
+.jet-layer-blue {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) scaleY(0.5);
+  width: 20px;
+  height: 60px; /* Tall flame */
+  background: linear-gradient(to top, var(--plasma-cyan), transparent);
+  filter: blur(6px);
+  opacity: 0.8;
+  transform-origin: bottom center;
+  /* This creates the volume of the fire */
+  box-shadow: 0 0 20px var(--plasma-cyan);
+  animation: gasThrust 0.2s infinite alternate;
+}
+
+/* LAYER 3: The Flash (Ambient light hitting the walls) */
+.jet-flash {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle, var(--plasma-cyan) 0%, transparent 70%);
+  opacity: 0.4;
+  filter: blur(10px);
+  animation: pulseGlow 1s infinite;
+}
+
+/* --- ACTIVE STATE TRIGGERS --- */
+
+.dock-item.active .plasma-jet {
+  opacity: 1;
+}
+
+/* When active, the icon turns pure white and floats high */
+.dock-item.active .dock-icon-wrapper {
+  color: #fff;
+  transform: translateY(-12px) scale(1.1); /* Floating higher on the gas */
+  /* Shadow behind the icon to separate it from the flame */
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,1)); 
+}
+
+/* --- HOME BUTTON ADJUSTMENTS --- */
+.dock-item.home {
+  width: 70px;
+}
+.dock-item.home.active .plasma-jet .jet-layer-blue {
+  height: 80px; /* Bigger flame for home button */
+  width: 30px;
+}
+.dock-item.home.active .dock-icon-wrapper {
+  transform: translateY(-15px) scale(1.3);
+}
+
+/* --- ANIMATIONS --- */
+
+@keyframes ultraFlicker {
+  0% { opacity: 0.9; transform: translateX(-50%) scale(1); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+  100% { opacity: 0.8; transform: translateX(-50%) scale(0.9); }
+}
+
+@keyframes gasThrust {
+  0% { height: 50px; opacity: 0.7; filter: blur(6px); }
+  100% { height: 65px; opacity: 1; filter: blur(4px); }
+}
+
+@keyframes pulseGlow {
+  0% { opacity: 0.3; transform: translateX(-50%) scale(1); }
+  50% { opacity: 0.6; transform: translateX(-50%) scale(1.2); }
+  100% { opacity: 0.3; transform: translateX(-50%) scale(1); }
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 600px) {
+  .eclipse-dock {
+    width: 95%;
+    max-width: 400px;
+    padding: 10px 10px;
+    gap: 0;
+    justify-content: space-around;
+  }
+}

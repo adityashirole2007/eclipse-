@@ -1,38 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
+import './App.css'; 
 import EclipseIntro from './EclipseIntro';
-import EclipseSelection from './EclipseSelection';
-import EclipseWorldMap from './EclipseWorldMap';
 
+/**
+ * App Component
+ * We removed EclipseNavigation from here so it doesn't show 
+ * on the Intro or Login screens.
+ */
 function App() {
-  // Views: 'intro', 'selection', 'worldMap'
-  // (Login is handled inside EclipseIntro, so we move from Intro to Selection)
-  const [currentView, setCurrentView] = useState('intro');
-  const [selectedHero, setSelectedHero] = useState(null);
-
-  // When Login is finished inside EclipseIntro
-  const handleLoginComplete = () => {
-    setCurrentView('selection');
-  };
-
-  // When a character is picked in EclipseSelection
-  const handleHeroSelect = (heroId) => {
-    setSelectedHero(heroId);
-    setCurrentView('worldMap');
-  };
-
   return (
     <div className="App">
-      {currentView === 'intro' && (
-        <EclipseIntro onFinalLogin={handleLoginComplete} />
-      )}
-
-      {currentView === 'selection' && (
-        <EclipseSelection onSelect={handleHeroSelect} />
-      )}
-
-      {currentView === 'worldMap' && (
-        <EclipseWorldMap character={selectedHero} />
-      )}
+      <EclipseIntro />
     </div>
   );
 }

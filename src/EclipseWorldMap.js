@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './EclipseWorldMap.css';
 import voidCharacter from './logo1.jpeg'; 
+// Import the Navigation Bar
+import EclipseNavigation from './EclipseNavigation';
 
 const EclipseWorldMap = () => {
   const [activeLevel, setActiveLevel] = useState(1); 
@@ -70,6 +72,9 @@ const EclipseWorldMap = () => {
           );
         })}
       </div>
+
+      {/* --- ADDED NAVIGATION BAR --- */}
+      <EclipseNavigation />
     </div>
   );
 };
