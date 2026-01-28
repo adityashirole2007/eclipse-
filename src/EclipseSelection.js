@@ -5,17 +5,17 @@ import EclipseWorldMap from './EclipseWorldMap'; // Ensure this is imported
 
 // Central Image
 
-import voidSanctum from './logo1.jpeg'; // Your Image 4 central asset
+import voidSanctum from './logo11.jpeg'; // Your Image 4 central asset
 
 // Island Images
 
-import arcanumImg from './logo1.jpeg';
+import arcanumImg from './logo1.1.jpeg';
 
-import aetherImg from './logo1.jpeg';
+import aetherImg from './logo2.1.jpeg';
 
-import chroniclesImg from './logo1.jpeg';
+import chroniclesImg from './logo3.1.jpeg';
 
-import lexiconImg from './logo1.jpeg';
+import lexiconImg from './logo4.1.jpeg';
 
 
 
@@ -53,7 +53,7 @@ const EclipseSelection = () => {
         {/* CENTER: VOID SANCTUM - Clicking this also takes you to the map */}
         <div className="central-hub" onClick={() => setShowMap(true)} style={{cursor: 'pointer'}}>
           <img src={voidSanctum} alt="Void Sanctum" className="hub-img float-crazy" />
-          <h2 className="orb-name-tag" style={{fontSize: '1.5rem'}}>Void Sanctum</h2>
+          <h2 className="orb-name-tag" style={{fontSize: '1.5rem'}}></h2>
         </div>
 
         {/* ORBITING ISLANDS */}

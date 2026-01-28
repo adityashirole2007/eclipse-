@@ -1,6 +1,6 @@
 :root {
   --neon-cyan: #00f7ff;
-  --bg-deep: #0b0214; /* Slightly purple-black for the theme */
+  --bg-deep: #0b0214;
   --void-purple: #9d00ff;
 }
 
@@ -8,101 +8,117 @@
   min-height: 100vh;
   background: radial-gradient(circle at center, #1a0533 0%, #000 100%);
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between; /* Pushes Header to top, Nav to bottom */
   align-items: center;
   overflow: hidden;
   position: relative;
+  padding: 20px 0; /* Creates room at the very top and bottom */
 }
 
-/* --- THE STAGE --- */
+/* --- THE STAGE (Middle Section) --- */
 .selection-stage {
   position: relative;
+  flex-grow: 1; /* Takes up all available space between top and bottom bars */
   width: 100%;
-  max-width: 900px;
-  height: 600px;
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 10;
 }
 
-/* --- CENTRAL HUB (VOID SANCTUM) --- */
+/* --- CENTRAL HUB --- */
+/* --- CENTRAL HUB FIX --- */
 .central-hub {
-  position: relative;
-  width: 280px;
+  position: absolute;
+  width: 180px;
   z-index: 20;
-  text-align: center;
+  display: flex;
+  flex-direction: column; /* Stacks image and text vertically */
+  align-items: center;
+  pointer-events: none; /* Let clicks pass through to the button behind if needed */
 }
 
 .hub-img {
   width: 100%;
   filter: drop-shadow(0 0 20px var(--void-purple));
+  margin-bottom: 10px; /* Space between image and its name */
 }
 
-/* --- SUBJECT ISLANDS (ORBS) --- */
+/* --- THE LABEL --- */
+.void-title-label {
+  color: #fff;
+  font-weight: 900;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow: 0 0 10px var(--void-purple), 0 0 20px #000;
+  white-space: nowrap; /* Prevents text from breaking into two lines */
+}
+
+/* --- RADIAL SPREAD (Updated coordinates) --- */
+/* Top islands stay high */
+.top-left     { transform: translate(-140px, -200px); }
+.top-right    { transform: translate(140px, -200px); }
+
+/* Bottom islands pushed further OUT (X) and slightly DOWN (Y) 
+   to create a "window" for the Void Sanctum name */
+.bottom-left  { transform: translate(-160px, 160px); }
+.bottom-right { transform: translate(160px, 160px); }
+
+/* --- MOBILE TWEAKS --- */
+@media (max-width: 768px) {
+  .central-hub { width: 130px; }
+  .void-title-label { font-size: 0.9rem; letter-spacing: 1px; }
+
+  .top-left     { transform: translate(-90px, -160px); }
+  .top-right    { transform: translate(90px, -160px); }
+  .bottom-left  { transform: translate(-110px, 140px); }
+  .bottom-right { transform: translate(110px, 140px); }
+}
+/* --- SUBJECT ISLANDS --- */
 .choice-orb {
   position: absolute;
-  width: 200px;
+  width: 150px; 
   background: transparent;
   border: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease-in-out;
   z-index: 25;
-}
-
-.choice-orb:hover {
-  transform: scale(1.1);
 }
 
 .orb-img-file {
   width: 100%;
-  height: auto;
   filter: drop-shadow(0 0 15px var(--accent));
 }
 
 .orb-name-tag {
   color: #fff;
   font-weight: 800;
-  font-size: 1.1rem;
-  margin-top: -10px;
+  font-size: 0.9rem;
+  margin-top: 5px;
   text-transform: uppercase;
-  letter-spacing: 2px;
 }
 
-.orb-sub-text {
-  color: rgba(255,255,255,0.6);
-  font-size: 0.8rem;
-}
+/* --- SPREAD LOGIC (No Overlap) --- */
+/* We push the X out slightly and the Y further to clear the Nav */
+.top-left     { transform: translate(-130px, -180px); }
+.top-right    { transform: translate(130px, -180px); }
+/* Bottom islands pushed LESS wide but FURTHER down to clear the hub */
+.bottom-left  { transform: translate(-110px, 150px); }
+.bottom-right { transform: translate(110px, 150px); }
 
-/* Desktop Alignment: Radial X-Shape */
-.top-left { top: 0; left: 5%; }
-.top-right { top: 0; right: 5%; }
-.bottom-left { bottom: 0; left: 5%; }
-.bottom-right { bottom: 0; right: 5%; }
-
-/* --- RESPONSIVE MOBILE VIEW --- */
+/* --- MOBILE VIEW --- */
 @media (max-width: 768px) {
-  .selection-stage {
-    height: 80vh;
-    transform: scale(0.8); /* Scale down for smaller screens */
-  }
+  .central-hub { width: 140px; }
+  .choice-orb { width: 110px; }
 
-  .choice-orb {
-    width: 140px;
-  }
-
-  .central-hub {
-    width: 180px;
-  }
-
-  /* Adjust spacing for mobile to prevent overlapping */
-  .top-left { top: 5%; left: 0%; }
-  .top-right { top: 5%; right: 0%; }
-  .bottom-left { bottom: 10%; left: 0%; }
-  .bottom-right { bottom: 10%; right: 0%; }
+  /* Tighten coordinates for mobile screens */
+  .top-left     { transform: translate(-80px, -150px); }
+  .top-right    { transform: translate(80px, -150px); }
+  .bottom-left  { transform: translate(-70px, 120px); }
+  .bottom-right { transform: translate(70px, 120px); }
 }
-
-/* --- OPTIONAL: GLOWING CONNECTORS --- */
-/* You can add SVG lines in JS to act as the purple "web" connections seen in image 4 */
