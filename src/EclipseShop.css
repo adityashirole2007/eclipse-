@@ -1,0 +1,284 @@
+:root {
+  --void-dark: #05000a;
+  --holo-cyan: #00f3ff;
+  --holo-purple: #bc13fe;
+  --asteroid-color: #3a3a4a;
+}
+
+/* --- 1. DEEP SPACE CONTAINER --- */
+.shop-container {
+  min-height: 100vh;
+  width: 100%;
+  background: radial-gradient(circle at center, #1a002e 0%, #000000 100%);
+  position: relative;
+  overflow: hidden; /* Traps the asteroids inside */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 120px;
+}
+
+/* --- 2. BACKGROUND ANIMATIONS --- */
+
+/* The Starfield */
+.star-layer {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: 0.6;
+  animation: star-fly 15s linear infinite;
+  z-index: 0;
+}
+
+@keyframes star-fly {
+  from { background-position: 0 0; }
+  to { background-position: 0 1000px; }
+}
+
+/* The Asteroids (Procedural Shapes) */
+.asteroid-belt {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.asteroid {
+  position: absolute;
+  background: linear-gradient(135deg, #555, #222);
+  box-shadow: inset -5px -5px 10px rgba(0,0,0,0.8);
+  /* Jagged Rock Shape */
+  clip-path: polygon(
+    20% 0%, 80% 0%, 100% 20%, 100% 80%, 
+    80% 100%, 20% 100%, 0% 80%, 0% 20%
+  );
+  opacity: 0.7;
+  animation: drift-tumble linear infinite;
+}
+
+/* Different sizes and positions set in animation delays below */
+.a1 { width: 60px; height: 60px; left: 10%; animation-duration: 12s; top: -100px; }
+.a2 { width: 40px; height: 40px; left: 80%; animation-duration: 9s; animation-delay: 2s; top: -100px; }
+.a3 { width: 90px; height: 90px; left: 60%; animation-duration: 18s; animation-delay: 5s; top: -100px; }
+.a4 { width: 30px; height: 30px; left: 20%; animation-duration: 15s; animation-delay: 1s; top: -100px; }
+
+@keyframes drift-tumble {
+  0% { transform: translateY(-100px) rotate(0deg); }
+  100% { transform: translateY(120vh) rotate(360deg); }
+}
+
+/* --- 3. SHOP CONTENT --- */
+.shop-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px;
+}
+
+/* Header */
+.shop-header-wrapper h1 {
+  font-family: 'Orbitron', sans-serif;
+  color: white;
+  font-size: 2.5rem;
+  letter-spacing: 5px;
+  text-shadow: 0 0 20px var(--holo-purple);
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.shop-header-wrapper h1::after {
+  content: "";
+  position: absolute;
+  bottom: -10px; left: 50%; transform: translateX(-50%);
+  width: 50%; height: 2px;
+  background: var(--holo-cyan);
+  box-shadow: 0 0 10px var(--holo-cyan);
+}
+
+/* Floating Character */
+.shopkeeper-stage {
+  margin-bottom: 30px;
+  animation: zero-g-float 6s ease-in-out infinite;
+}
+
+.shopkeeper-img {
+  width: 200px;
+  filter: drop-shadow(0 0 30px rgba(188, 19, 254, 0.6));
+}
+
+@keyframes zero-g-float {
+  0%, 100% { transform: translateY(0) rotate(2deg); }
+  50% { transform: translateY(-20px) rotate(-2deg); }
+}
+
+/* --- 4. HOLOGRAPHIC CARDS --- */
+.shop-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 90%;
+}
+
+.shop-card {
+  /* Glass Effect */
+  background: rgba(20, 20, 30, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.shop-card:hover {
+  background: rgba(30, 30, 50, 0.8);
+  border-color: var(--holo-cyan);
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+}
+
+/* Card Badge (Rank) */
+.card-badge {
+  position: absolute;
+  top: 0; left: 0;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--holo-cyan);
+  padding: 5px 10px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  border-bottom-right-radius: 10px;
+  border-right: 1px solid var(--holo-cyan);
+  border-bottom: 1px solid var(--holo-cyan);
+}
+
+/* Image */
+.card-visuals {
+  width: 80px; height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-visuals img {
+  width: 100%;
+  filter: drop-shadow(0 0 5px white);
+}
+
+/* Text Info */
+.card-info {
+  flex: 1;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.card-title {
+  color: white;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.card-price-tag {
+  color: #ccc;
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+
+.price-val {
+  color: var(--holo-purple);
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-right: 5px;
+}
+
+/* Space Button */
+.buy-button {
+  background: transparent;
+  color: white;
+  border: 1px solid white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-family: 'Orbitron', sans-serif;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.buy-button:hover {
+  background: var(--holo-purple);
+  border-color: var(--holo-purple);
+  box-shadow: 0 0 15px var(--holo-purple);
+}
+/* --- METEOR SHOWER ANIMATION --- */
+.meteor-shower {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.meteor {
+  position: absolute;
+  top: 50%; left: 50%;
+  height: 2px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, #fff 50%, rgba(255, 255, 255, 0) 100%);
+  opacity: 0;
+  transform: rotate(-45deg);
+  animation: meteor-fall linear infinite;
+  box-shadow: 0 0 10px #fff, 0 0 20px var(--holo-cyan);
+}
+
+/* Meteor Head (The glowing tip) */
+.meteor::before {
+  content: "";
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px; height: 4px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 15px #fff;
+}
+
+/* Randomized Meteor Speeds & Positions */
+.meteor:nth-child(1) { width: 150px; top: -10%; left: 20%; animation-duration: 4s; animation-delay: 0s; }
+.meteor:nth-child(2) { width: 100px; top: -10%; left: 50%; animation-duration: 3s; animation-delay: 1.5s; }
+.meteor:nth-child(3) { width: 200px; top: -10%; left: 80%; animation-duration: 5s; animation-delay: 2s; }
+.meteor:nth-child(4) { width: 120px; top: -10%; left: 10%; animation-duration: 2.5s; animation-delay: 3s; }
+.meteor:nth-child(5) { width: 180px; top: -10%; left: 60%; animation-duration: 3.5s; animation-delay: 4.5s; }
+.meteor:nth-child(6) { width: 150px; top: 20%; left: -10%; animation-duration: 4.2s; animation-delay: 1s; } /* Side entry */
+.meteor:nth-child(7) { width: 250px; top: 40%; left: -10%; animation-duration: 3s; animation-delay: 2.5s; }
+
+@keyframes meteor-fall {
+  0% {
+    transform: rotate(-45deg) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(-45deg) translateX(-1000px); /* Moves diagonally left-down */
+    opacity: 0;
+  }
+}

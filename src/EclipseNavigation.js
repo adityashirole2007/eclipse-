@@ -1,8 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './EclipseNavigation.css';
 
-const EclipseNavigation = ({ onNavigate }) => { // Prop received here
-  const [activeTab, setActiveTab] = useState('home');
+const EclipseNavigation = ({ onNavigate, activeTabOverride }) => { 
+  const [internalActiveTab, setInternalActiveTab] = useState('home');
+  
+  // Allow parent to force the active tab (e.g., if you are on the Shop screen, force 'shop' highlight)
+  const activeTab = activeTabOverride || internalActiveTab;
+
+  useEffect(() => {
+    if (activeTabOverride) {
+        setInternalActiveTab(activeTabOverride);
+    }
+  }, [activeTabOverride]);
 
   const navItems = ['shop', 'battle', 'home', 'leaderboard', 'settings'];
 
@@ -17,13 +26,13 @@ const EclipseNavigation = ({ onNavigate }) => { // Prop received here
   };
 
   const handleTabClick = (item) => {
-    setActiveTab(item);
+    setInternalActiveTab(item);
     
-    // Logic for navigation
-    if (item === 'home') {
-      onNavigate('selection');
-    } else if (item === 'settings') {
-      onNavigate('settings');
+    // --- KEY FIX IS HERE ---
+    // We strictly pass whatever is clicked to the parent.
+    // We do NOT filter for 'home' or 'settings' anymore.
+    if (onNavigate && typeof onNavigate === 'function') {
+      onNavigate(item);
     }
   };
 
