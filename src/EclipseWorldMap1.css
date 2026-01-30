@@ -1,6 +1,6 @@
 /* --- SCIENCE THEME (GREEN #58cc02) --- */
 .world-container-science.science-theme {
-  background: #000 url('./conquest_bg.jpg') no-repeat center center; /* You can change this BG if you have a science one */
+  background: #000 url('./conquest_bg1.jpg') no-repeat center center; /* You can change this BG if you have a science one */
   background-size: cover;
   background-attachment: fixed;
   min-height: 100vh;
