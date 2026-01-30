@@ -3,72 +3,119 @@
   --core-black: #000000;
   --plasma-cyan: #00f0ff; 
   --plasma-white: #ffffff;
-  --magic-blue: #0077ff; /* Deeper blue for magical depth */
+  --magic-blue: #0077ff; 
+  --void-purple: #bd00ff;
+  --alert-red: #ff2a2a;
+  --gold-star: #ffd700;
 }
 
-/* --- TOP HUD (Dark Magic Theme) --- */
+/* --- TOP HUD CONTAINER --- */
 .eclipse-hud-top {
   position: fixed;
-  top: 20px;
+  top: 15px;
   left: 0;
   width: 100%;
   display: flex;
-  justify-content: space-between;
-  padding: 0 24px;
+  justify-content: flex-end; /* Aligns stats to the right since Back button is gone */
+  align-items: flex-start;
+  padding: 0 16px;
   z-index: 1000;
   pointer-events: none;
 }
 
+/* --- STATS CLUSTER --- */
+.hud-stats-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+/* --- COMMON STAT STYLE --- */
 .hud-stat {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
   
-  /* Glass-morphism: Transparent but blurs background */
-  background: rgba(0, 0, 0, 0.4);
+  /* Angled Sci-fi shape */
+  clip-path: polygon(10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%);
+  
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   
-  padding: 10px 20px;
-  border-radius: 40px;
-  
-  /* Thick Glowing Border */
-  border: 2px solid var(--plasma-cyan);
-  box-shadow: 
-    0 0 15px rgba(0, 240, 255, 0.3), 
-    inset 0 0 8px rgba(0, 240, 255, 0.2),
-    0 10px 30px rgba(0, 0, 0, 0.5);
-    
-  pointer-events: auto;
   position: relative;
+  transition: transform 0.2s ease;
   animation: statHum 4s ease-in-out infinite;
 }
 
-/* Color Overrides for specific stats */
-.hud-stat.hearts {
-  border-color: #ff2a2a;
-  box-shadow: 0 0 15px rgba(255, 42, 42, 0.3), inset 0 0 8px rgba(255, 42, 42, 0.2);
+/* Colored Bottom Bars for Stats */
+.hud-stat::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  opacity: 0.8;
 }
 
+/* -- SPECIFIC STATS -- */
+
+/* LEVEL (Purple) */
+.hud-stat.level {
+  background: linear-gradient(180deg, rgba(189, 0, 255, 0.1) 0%, rgba(0,0,0,0.6) 100%);
+}
+.hud-stat.level::after { background: var(--void-purple); box-shadow: 0 0 10px var(--void-purple); }
+.hud-stat.level .stat-value { color: #e0aaff; text-shadow: 0 0 8px var(--void-purple); }
+
+/* HEARTS (Red) */
+.hud-stat.hearts {
+  background: linear-gradient(180deg, rgba(255, 42, 42, 0.1) 0%, rgba(0,0,0,0.6) 100%);
+}
+.hud-stat.hearts::after { background: var(--alert-red); box-shadow: 0 0 10px var(--alert-red); }
+
+/* STARDUST (Gold) */
 .hud-stat.stardust {
-  border-color: #ffd700;
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3), inset 0 0 8px rgba(255, 215, 0, 0.2);
+  background: linear-gradient(180deg, rgba(255, 215, 0, 0.1) 0%, rgba(0,0,0,0.6) 100%);
+}
+.hud-stat.stardust::after { background: var(--gold-star); box-shadow: 0 0 10px var(--gold-star); }
+
+/* --- TEXT & ICONS --- */
+.stat-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 1px;
+  margin-right: 4px;
 }
 
 .stat-value { 
   color: #fff; 
   font-weight: 900; 
-  font-family: 'Orbitron', sans-serif; /* High-tech font recommended */
-  letter-spacing: 1px;
+  font-family: 'Orbitron', sans-serif; 
+  font-size: 14px;
+  letter-spacing: 0.5px;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 .stat-icon-glow { 
-  width: 22px; 
-  filter: drop-shadow(0 0 5px currentColor);
+  width: 18px; 
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* --- DOCK CONTAINER --- */
+.stat-icon-glow svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 4px currentColor);
+}
+
+/* --- DOCK CONTAINER (BOTTOM NAV) --- */
 .eclipse-dock-container {
   position: fixed;
   bottom: 15px; 
@@ -142,7 +189,7 @@
   transition: all 0.2s ease;
 }
 
-/* --- 10X INTENSITY MAGIC FLAMES --- */
+/* --- MAGIC FLAMES --- */
 .plasma-jet {
   position: absolute;
   bottom: -5px;

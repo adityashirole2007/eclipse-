@@ -1,27 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import './EclipseWorldMap1.css'; // Importing the Science-specific CSS
-import voidCharacter from './logo1.jpeg'; 
+import './EclipseWorldMap1.css'; 
 import EclipseNavigation from './EclipseNavigation';
+import voidCharacter from './logo1.jpeg'; 
 
 const EclipseWorldMap1 = ({ onNavigate }) => {
   const [activeLevel, setActiveLevel] = useState(1); 
   const [isLightning, setIsLightning] = useState(false);
-  
-  const levels = Array.from({ length: 50 }, (_, i) => i + 1);
+
+  // Define 4 levels with Names Only
+  const levels = [
+    { id: 1, name: 'Mouth' },
+    { id: 2, name: 'Stomach' },
+    { id: 3, name: 'Intestine' },
+    { id: 4, name: 'Kidney' }
+  ];
 
   useEffect(() => {
+    // Lightning effect
     const lightningInterval = setInterval(() => {
       setIsLightning(true);
       setTimeout(() => setIsLightning(false), 80);
       setTimeout(() => setIsLightning(true), 160);
       setTimeout(() => setIsLightning(false), 300);
-    }, 2000);
+    }, 4000); 
     return () => clearInterval(lightningInterval);
   }, []);
 
   useEffect(() => {
+    // Auto scroll to bottom
     const timer = setTimeout(() => {
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'auto' });
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }, 100);
     return () => clearTimeout(timer);
   }, []);
@@ -31,33 +39,47 @@ const EclipseWorldMap1 = ({ onNavigate }) => {
       <div className="space-dust"></div>
       
       <div className="path-grid">
-        {levels.map((level, index) => {
-          const isCurrent = level === activeLevel;
-          const isCompleted = level < activeLevel;
-          const posClass = index % 4 === 0 ? 'center' : index % 4 === 1 ? 'right' : index % 4 === 2 ? 'center' : 'left';
+        {levels.map((levelData, index) => {
+          const levelNum = levelData.id;
+          const isCurrent = levelNum === activeLevel;
+          const isCompleted = levelNum < activeLevel;
+          
+          // Layout: Center -> Right -> Left -> Center
+          const posClass = index % 2 === 0 ? 'center' : (index === 1 ? 'right' : 'left');
 
           return (
-            <div key={level} className={`node-wrapper ${posClass}`}>
+            <div key={levelNum} className={`node-wrapper ${posClass}`}>
+              
+              {/* Void Character (Blue Background Theme) */}
               {isCurrent && (
                 <div className="void-pedestal">
                   <div className="void-aura-science"></div>
                   <div className="void-tag-science">VOID</div>
-                  <img src={voidCharacter} alt="Void" className="void-hero float-crazy" />
+                  <img src={voidCharacter} alt="Void" className="void-hero" style={{animation: 'floatCrazy 3s ease-in-out infinite'}} />
                 </div>
               )}
 
-              <div className={`orb-node ${isCurrent ? 'active' : ''} ${isCompleted ? 'done' : 'locked'}`}>
+              {/* The Orb */}
+              <div 
+                className={`orb-node ${isCurrent ? 'active' : ''} ${isCompleted ? 'done' : 'locked'}`}
+                onClick={() => setActiveLevel(levelNum)}
+              >
                 <div className="orb-inner-science">
-                  <span className="orb-num">{level}</span>
+                  {/* TEXT NAME instead of Image */}
+                  <span className="orb-text">{levelData.name}</span>
                 </div>
+                
+                {/* Energy Rings */}
                 {(isCurrent || isCompleted) && <div className="energy-rings-science"></div>}
               </div>
               
-              {level < 50 && <div className="tendril-up-science"></div>}
+              {/* Connection Line */}
+              {index < levels.length - 1 && <div className="tendril-up-science"></div>}
             </div>
           );
         })}
       </div>
+      
       <EclipseNavigation onNavigate={onNavigate} />
     </div>
   );

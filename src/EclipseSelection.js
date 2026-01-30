@@ -3,7 +3,8 @@ import './EclipseSelection.css';
 import EclipseNavigation from './EclipseNavigation';
 import EclipseShop from './EclipseShop'; 
 import EclipseLeaderboard from './EclipseLeaderboard'; 
-import EclipseProfile from './EclipseProfile'; // <--- IMPORTED PROFILE
+import EclipseProfile from './EclipseProfile';
+import EclipseChapterSelection from './EclipseChapterSelection'; // New Component
 
 // Import all map variants
 import EclipseWorldMap from './EclipseWorldMap';   
@@ -26,7 +27,7 @@ const EclipseSelection = ({ onNavigate: externalNavigate }) => {
 
   const choices = [
     { id: 'math', img: arcanumImg, label: "THE ARCANUM", sub: "Math", color: '#00f7ff', pos: 'top-left', target: 'map' },
-    { id: 'science', img: aetherImg, label: "THE AETHER", sub: "Science", color: '#58cc02', pos: 'top-right', target: 'map1' },
+    { id: 'science', img: aetherImg, label: "THE AETHER", sub: "Science", color: '#58cc02', pos: 'top-right', target: 'science-chapters' }, // Updated Target
     { id: 'history', img: chroniclesImg, label: "THE CHRONICLES", sub: "History", color: '#ffaa00', pos: 'bottom-left', target: 'map2' },
     { id: 'english', img: lexiconImg, label: "THE LEXICON", sub: "English", color: '#ff0055', pos: 'bottom-right', target: 'map3' }
   ];
@@ -38,9 +39,8 @@ const EclipseSelection = ({ onNavigate: externalNavigate }) => {
       if (['home', 'selection'].includes(destination)) {
           setCurrentScreen('selection');
       } 
-      // --- THE FIX IS HERE ---
-      // We added 'profile' to this list so it stays inside EclipseSelection
-      else if (externalNavigate && !['map', 'map1', 'map2', 'map3', 'shop', 'leaderboard', 'profile'].includes(destination)) {
+      // Added 'science-chapters' and 'profile' to the internal routing list
+      else if (externalNavigate && !['map', 'map1', 'map2', 'map3', 'shop', 'leaderboard', 'profile', 'science-chapters'].includes(destination)) {
           externalNavigate(destination);
       }
   };
@@ -49,9 +49,10 @@ const EclipseSelection = ({ onNavigate: externalNavigate }) => {
 
   if (currentScreen === 'shop') return <EclipseShop onNavigate={handleInternalNavigation} />;
   if (currentScreen === 'leaderboard') return <EclipseLeaderboard onNavigate={handleInternalNavigation} />;
-  
-  // Render Profile
   if (currentScreen === 'profile') return <EclipseProfile onNavigate={handleInternalNavigation} />;
+  
+  // Render Science Chapter List
+  if (currentScreen === 'science-chapters') return <EclipseChapterSelection onNavigate={handleInternalNavigation} />;
 
   // Render Specific Maps
   if (currentScreen === 'map') return <EclipseWorldMap onNavigate={handleInternalNavigation} />;
@@ -86,7 +87,7 @@ const EclipseSelection = ({ onNavigate: externalNavigate }) => {
       </div>
 
       <div className="selection-stage">
-        {/* CENTER HUB - NOW ROUTES TO PROFILE */}
+        {/* CENTER HUB - ROUTES TO PROFILE */}
         <div className="central-hub" onClick={() => handleInternalNavigation('profile')}>
           <img src={voidSanctum} alt="Void Sanctum" className="hub-img" />
         </div>
