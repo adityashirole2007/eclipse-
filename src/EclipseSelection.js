@@ -4,7 +4,8 @@ import EclipseNavigation from './EclipseNavigation';
 import EclipseShop from './EclipseShop'; 
 import EclipseLeaderboard from './EclipseLeaderboard'; 
 import EclipseProfile from './EclipseProfile';
-import EclipseChapterSelection from './EclipseChapterSelection'; // New Component
+import EclipseChapterSelection from './EclipseChapterSelection'; 
+import EclipseSettings from './EclipseSettings'; // <--- IMPORT THIS
 
 // Import all map variants
 import EclipseWorldMap from './EclipseWorldMap';   
@@ -19,7 +20,7 @@ import aetherImg from './logo2.1.jpeg';
 import chroniclesImg from './logo3.1.jpeg';
 import lexiconImg from './logo4.1.jpeg';
 
-const EclipseSelection = ({ onNavigate: externalNavigate }) => { 
+const EclipseSelection = ({ onNavigate: externalNavigate, onLogout }) => { 
   const [currentScreen, setCurrentScreen] = useState('selection');
 
   const stars = Array.from({ length: 50 });
@@ -27,7 +28,7 @@ const EclipseSelection = ({ onNavigate: externalNavigate }) => {
 
   const choices = [
     { id: 'math', img: arcanumImg, label: "THE ARCANUM", sub: "Math", color: '#00f7ff', pos: 'top-left', target: 'map' },
-    { id: 'science', img: aetherImg, label: "THE AETHER", sub: "Science", color: '#58cc02', pos: 'top-right', target: 'science-chapters' }, // Updated Target
+    { id: 'science', img: aetherImg, label: "THE AETHER", sub: "Science", color: '#58cc02', pos: 'top-right', target: 'science-chapters' },
     { id: 'history', img: chroniclesImg, label: "THE CHRONICLES", sub: "History", color: '#ffaa00', pos: 'bottom-left', target: 'map2' },
     { id: 'english', img: lexiconImg, label: "THE LEXICON", sub: "English", color: '#ff0055', pos: 'bottom-right', target: 'map3' }
   ];
@@ -36,11 +37,12 @@ const EclipseSelection = ({ onNavigate: externalNavigate }) => {
       console.log("Navigating to:", destination); 
       setCurrentScreen(destination);
       
+      // If going to 'home' (which is 'selection'), reset view
       if (['home', 'selection'].includes(destination)) {
           setCurrentScreen('selection');
       } 
-      // Added 'science-chapters' and 'profile' to the internal routing list
-      else if (externalNavigate && !['map', 'map1', 'map2', 'map3', 'shop', 'leaderboard', 'profile', 'science-chapters'].includes(destination)) {
+      // Internal routing list: ADD 'settings' here
+      else if (externalNavigate && !['map', 'map1', 'map2', 'map3', 'shop', 'leaderboard', 'profile', 'science-chapters', 'settings'].includes(destination)) {
           externalNavigate(destination);
       }
   };
@@ -51,6 +53,11 @@ const EclipseSelection = ({ onNavigate: externalNavigate }) => {
   if (currentScreen === 'leaderboard') return <EclipseLeaderboard onNavigate={handleInternalNavigation} />;
   if (currentScreen === 'profile') return <EclipseProfile onNavigate={handleInternalNavigation} />;
   
+  // Render Settings - pass handleInternalNavigation to go back, and onLogout to exit
+  if (currentScreen === 'settings') {
+    return <EclipseSettings onBack={() => handleInternalNavigation('selection')} onLogout={onLogout} />;
+  }
+
   // Render Science Chapter List
   if (currentScreen === 'science-chapters') return <EclipseChapterSelection onNavigate={handleInternalNavigation} />;
 

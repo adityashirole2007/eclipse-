@@ -2,251 +2,131 @@
    1. GLOBAL CONTAINER & START SCREEN
    ========================================= */
 .intro-container {
-  position: fixed;
-  top: 0; left: 0;
+  position: fixed; top: 0; left: 0;
   width: 100vw; height: 100vh;
   background-color: #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  z-index: 9999;
+  display: flex; justify-content: center; align-items: center;
+  overflow: hidden; z-index: 9999;
 }
 
-/* Deep Space Background with Violet Tint */
 .deep-space-bg {
-  position: absolute;
-  top: 0; left: 0;
+  position: absolute; top: 0; left: 0;
   width: 100%; height: 100%;
   background: radial-gradient(circle at center, #0a0011 0%, #000 70%); 
-  z-index: 1;
-  pointer-events: none;
+  z-index: 1; pointer-events: none;
 }
 
-/* Tap to Start (Violet) */
 .start-prompt {
-  text-align: center;
-  color: #b026ff; /* Violet */
-  font-family: 'Orbitron', sans-serif;
-  letter-spacing: 2px;
-  animation: fadeIn 2s ease;
-  z-index: 1000;
-  cursor: pointer;
+  text-align: center; color: #b026ff; font-family: 'Orbitron', sans-serif;
+  letter-spacing: 2px; animation: fadeIn 2s ease; z-index: 1000; cursor: pointer;
 }
 
 .pulse-circle-violet {
-  width: 50px; height: 50px;
-  border: 2px solid #b026ff;
-  border-radius: 50%;
-  margin: 0 auto 20px auto;
-  box-shadow: 0 0 15px #b026ff;
+  width: 50px; height: 50px; border: 2px solid #b026ff; border-radius: 50%;
+  margin: 0 auto 20px auto; box-shadow: 0 0 15px #b026ff;
   animation: pulseRippleViolet 2s infinite;
 }
-
-@keyframes pulseRippleViolet {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(2); opacity: 0; }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; } to { opacity: 1; }
-}
+@keyframes pulseRippleViolet { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 /* =========================================
-   2. SPHERE PHASE (PURE WHITE)
+   2. VIDEO PHASE
    ========================================= */
-.sphere-scene-wrapper {
-  position: absolute;
-  top: 0; 
-  left: 0;
-  width: 100vw; 
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Horizontally Center */
-  justify-content: flex-start; /* Start from top */
-  padding-top: 20vh; /* Pushes sphere to upper half center */
-  z-index: 10;
+.video-scene-wrapper {
+  position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  padding-top: 10vh; z-index: 10;
 }
 
-.white-sphere {
-  /* Reduced size (approx 70% of original 150px) */
-  width: 105px; height: 105px;
-  background: #fff; /* Pure White */
-  border-radius: 50%;
-  /* White Glow */
-  box-shadow: 0 0 35px #fff, 0 0 70px rgba(255, 255, 255, 0.5);
-  margin-bottom: 50px; /* Space between sphere and text */
+.intro-video {
+  width: 80%; max-width: 700px; height: 35vh; 
+  object-fit: cover; border-radius: 10px;
+  box-shadow: 0 0 30px rgba(176, 38, 255, 0.3); margin-bottom: 40px; display: block;
 }
 
-/* Default Hovering Effect */
-.hovering .white-sphere {
-  animation: sphereHover 3s ease-in-out infinite;
-}
-
-@keyframes sphereHover {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-/* Shake Animation (0.25s duration) */
-.shaking .white-sphere {
-  animation: tensionShake 0.25s ease-in forwards;
-}
-
-@keyframes tensionShake {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.3) translate(-2px, 2px); }
-}
-
-.dialogue-below-sphere {
-  width: 90%;
-  max-width: 1000px;
-  text-align: center;
-}
+.dialogue-below-video { width: 90%; max-width: 1000px; text-align: center; }
 
 /* =========================================
-   3. TEXT STYLES (VIOLET SMOKE & FLAME)
+   3. TEXT STYLES (VIOLET SMOKE)
    ========================================= */
-.dialogue-wrapper {
-  width: 90%;
-  max-width: 1000px;
-  text-align: center;
-  z-index: 20;
-}
+.dialogue-wrapper { width: 90%; max-width: 1000px; text-align: center; z-index: 20; }
 
 .violet-flame-text {
-  font-family: 'Georgia', serif;
-  font-weight: 900;
-  text-transform: uppercase;
-  color: #f0d0ff; /* Pale Violet Text */
+  font-family: 'Georgia', serif; font-weight: 900; text-transform: uppercase;
+  color: #f0d0ff; 
+  text-shadow: 0 0 10px #b026ff, 0 -5px 15px #8000ff, 0 -10px 20px rgba(128, 0, 255, 0.5);
   
-  /* Violet Flame Shadow Effect */
-  text-shadow: 
-    0 0 10px #b026ff, 
-    0 -5px 15px #8000ff, 
-    0 -10px 20px rgba(128, 0, 255, 0.5);
-    
-  font-size: clamp(2rem, 6vw, 5rem);
-  opacity: 0;
-  margin: 0;
+  /* REDUCED FONT SIZE for clean look */
+  font-size: clamp(1.5rem, 4vw, 3rem); 
   
-  /* Smoke Animation */
+  opacity: 0; margin: 0;
   animation: violetSmoke 2s infinite alternate;
 }
-
 @keyframes violetSmoke {
   0% { text-shadow: 0 0 10px #b026ff, 0 -2px 10px #8000ff; }
   50% { text-shadow: 0 0 15px #b026ff, 0 -8px 20px #8000ff, 0 -15px 30px rgba(128, 0, 255, 0.4); }
   100% { text-shadow: 0 0 10px #b026ff, 0 -4px 15px #8000ff; }
 }
 
-.fade-in {
-  animation: cinematicFade ease-in-out forwards;
-}
-
+.fade-in { animation: cinematicFade ease-in-out forwards; }
 @keyframes cinematicFade {
-  0% { opacity: 0; filter: blur(5px); }
-  20% { opacity: 1; filter: blur(0px); }
-  80% { opacity: 1; filter: blur(0px); }
-  100% { opacity: 0; filter: blur(5px); }
+  0% { opacity: 0; filter: blur(5px); } 20% { opacity: 1; filter: blur(0px); }
+  80% { opacity: 1; filter: blur(0px); } 100% { opacity: 0; filter: blur(5px); }
 }
 
 .dialogue-lower-half {
-  position: absolute;
-  top: 55%; /* Below the image */
-  width: 90%;
-  text-align: center;
-  z-index: 20;
+  position: absolute; top: 55%; width: 90%; text-align: center; z-index: 20;
 }
 
 /* =========================================
-   4. VOID IMAGE (FIXED UPPER HALF + FLAMES)
+   4. VOID IMAGE (FIXED UPPER)
    ========================================= */
 .void-fixed-upper {
-  position: absolute;
-  top: 25%; /* Fixed at center of Upper Half */
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 20;
+  position: absolute; top: 25%; left: 50%;
+  transform: translate(-50%, -50%); z-index: 20;
 }
 
 .void-flame-img {
-  /* Increased by 50% (150px * 1.5 = 225px) */
-  width: 225px; 
-  opacity: 0;
-  
-  /* Animations: FadeIn, Floating, and Violet Flame Pulse */
-  animation: 
-    simpleFadeIn 2s forwards, 
-    floatMote 3s ease-in-out infinite, 
-    violetFlamePulse 2s infinite;
-  
-  /* Intense Violet Flame Glow */
+  width: 225px; opacity: 0;
+  animation: simpleFadeIn 2s forwards, floatMote 3s ease-in-out infinite, violetFlamePulse 2s infinite;
   filter: drop-shadow(0 0 20px #b026ff) drop-shadow(0 -15px 40px #8000ff);
 }
 
-@keyframes floatMote {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-15px); }
-  100% { transform: translateY(0px); }
-}
-
+@keyframes floatMote { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
 @keyframes violetFlamePulse {
   0% { filter: drop-shadow(0 0 20px #b026ff) drop-shadow(0 -15px 40px #8000ff); }
   50% { filter: drop-shadow(0 0 35px #c040ff) drop-shadow(0 -25px 50px #9000ff); }
   100% { filter: drop-shadow(0 0 20px #b026ff) drop-shadow(0 -15px 40px #8000ff); }
 }
-
-@keyframes simpleFadeIn {
-  from { opacity: 0; } to { opacity: 1; }
-}
+@keyframes simpleFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 /* =========================================
-   5. X-FORMATION (SPAWN FROM UPPER VOID)
+   5. X-FORMATION (SAFE BOUNDS)
    ========================================= */
 .x-formation-wrapper {
-  position: absolute; 
-  top: 50%; left: 50%; /* Center of Screen */
-  width: 0; height: 0; 
-  transform: translate(-50%, -50%);
-  z-index: 40; pointer-events: none;
+  position: absolute; top: 50%; left: 50%; width: 0; height: 0; 
+  transform: translate(-50%, -50%); z-index: 40; pointer-events: none;
 }
 
 .x-logo {
   position: absolute; width: 90px; height: 90px; object-fit: contain;
-  /* Origin: Top 25% (Void Position). Relative to Center (50%), this is -25vh up. */
-  top: -25vh; left: 0; 
-  margin: -45px 0 0 -45px; 
-  filter: drop-shadow(0 0 10px rgba(176, 38, 255, 0.5));
-  opacity: 0;
+  top: -25vh; left: 0; margin: -45px 0 0 -45px; 
+  filter: drop-shadow(0 0 10px rgba(176, 38, 255, 0.5)); opacity: 0;
 }
 
-/* Animations: Move from Void to Square Positions centered on screen */
 .form-square-from-upper .pos-tl { animation: spawnTL 9s ease-out forwards; }
 .form-square-from-upper .pos-tr { animation: spawnTR 9s ease-out forwards; }
 .form-square-from-upper .pos-bl { animation: spawnBL 9s ease-out forwards; }
 .form-square-from-upper .pos-br { animation: spawnBR 9s ease-out forwards; }
 
-@keyframes spawnTL {
-  10% { opacity: 1; }
-  100% { transform: translate(-160px, -160px) scale(1); opacity: 1; top: 0; } 
-}
-@keyframes spawnTR {
-  10% { opacity: 1; }
-  100% { transform: translate(160px, -160px) scale(1); opacity: 1; top: 0; }
-}
-@keyframes spawnBL {
-  10% { opacity: 1; }
-  100% { transform: translate(-160px, 160px) scale(1); opacity: 1; top: 0; }
-}
-@keyframes spawnBR {
-  10% { opacity: 1; }
-  100% { transform: translate(160px, 160px) scale(1); opacity: 1; top: 0; }
-}
+/* Safe bounds: 110px from center */
+@keyframes spawnTL { 10% { opacity: 1; } 100% { transform: translate(-110px, -110px) scale(1); opacity: 1; top: 0; } }
+@keyframes spawnTR { 10% { opacity: 1; } 100% { transform: translate(110px, -110px) scale(1); opacity: 1; top: 0; } }
+@keyframes spawnBL { 10% { opacity: 1; } 100% { transform: translate(-110px, 110px) scale(1); opacity: 1; top: 0; } }
+@keyframes spawnBR { 10% { opacity: 1; } 100% { transform: translate(110px, 110px) scale(1); opacity: 1; top: 0; } }
 
 /* =========================================
-   6. SEQUENTIAL LOGOS & LABELS
+   6. SEQUENTIAL LOGOS
    ========================================= */
 .sequential-logo-wrapper {
   position: absolute; top: 50%; left: 50%;
@@ -266,8 +146,7 @@
   animation: slideUpFade 0.5s ease-out forwards;
 }
 .seq-sublabel {
-  font-family: 'Orbitron', sans-serif;
-  color: #f0d0ff; font-size: 1.5rem; letter-spacing: 5px; margin-top: 10px;
+  font-family: 'Orbitron', sans-serif; color: #f0d0ff; font-size: 1.5rem; letter-spacing: 5px; margin-top: 10px;
   opacity: 0; text-transform: uppercase;
   animation: slideUpFade 0.5s ease-out 0.2s forwards;
 }
@@ -288,29 +167,35 @@
   background: rgba(40, 0, 60, 0.6); border: 1px solid #b026ff;
   padding: 15px 30px; border-radius: 30px; cursor: pointer;
   z-index: 1001; backdrop-filter: blur(5px);
+  transition: all 0.3s ease; min-width: 140px;
 }
 .skip-text-violet { font-family: 'Share Tech Mono', monospace; color: #b026ff; font-weight: bold; }
 .skip-glow-violet {
   position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
   background: linear-gradient(90deg, transparent, rgba(176, 38, 255, 0.4), transparent);
   animation: sheen 3s infinite;
+  z-index: 1;
 }
+.skip-btn-violet:active { transform: scale(0.95); }
 @keyframes sheen { 0% { left: -100%; } 20% { left: 100%; } 100% { left: 100%; } }
 
 /* =========================================
    8. MOBILE RESPONSIVENESS
    ========================================= */
 @media (max-width: 768px) {
-  .sphere-scene-wrapper { padding-top: 15vh; }
-  .white-sphere { width: 80px; height: 80px; }
-  .void-flame-img { width: 160px; /* Scaled down for mobile, but still larger */ }
+  .video-scene-wrapper { padding-top: 10vh; }
+  .intro-video { height: 25vh; }
+  .void-flame-img { width: 160px; }
   .skip-btn-violet { bottom: 50px; right: 50%; transform: translateX(50%); width: 60%; text-align: center; }
-  .violet-flame-text { font-size: 1.8rem; }
+  
+  /* Reduced Mobile Font Sizes */
+  .violet-flame-text { font-size: 1.2rem; }
   .seq-label { font-size: 1.5rem; }
   .seq-sublabel { font-size: 1.2rem; }
   
-  @keyframes spawnTL { 100% { transform: translate(-130px, -130px) scale(0.8); opacity: 1; top: 0; } }
-  @keyframes spawnTR { 100% { transform: translate(130px, -130px) scale(0.8); opacity: 1; top: 0; } }
-  @keyframes spawnBL { 100% { transform: translate(-130px, 130px) scale(0.8); opacity: 1; top: 0; } }
-  @keyframes spawnBR { 100% { transform: translate(130px, 130px) scale(0.8); opacity: 1; top: 0; } }
+  /* TIGHTER SQUARE FOR MOBILE (80px from center) */
+  @keyframes spawnTL { 100% { transform: translate(-80px, -80px) scale(0.8); opacity: 1; top: 0; } }
+  @keyframes spawnTR { 100% { transform: translate(80px, -80px) scale(0.8); opacity: 1; top: 0; } }
+  @keyframes spawnBL { 100% { transform: translate(-80px, 80px) scale(0.8); opacity: 1; top: 0; } }
+  @keyframes spawnBR { 100% { transform: translate(80px, 80px) scale(0.8); opacity: 1; top: 0; } }
 }

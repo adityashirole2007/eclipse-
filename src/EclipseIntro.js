@@ -12,9 +12,11 @@ import audio4File from './dialogue4.mp3';
 import audio5File from './dialogue5.mp3'; 
 import audio6File from './dialogue6.mp3'; 
 import audio7File from './dialogue7.mp3'; 
+import audio10File from './dialogue10.mp3'; 
 import crackFile from './cracksound.mp3';
 import continueFile from './continue.mp3';
 import voidImage from './voidIntro.jpeg'; 
+import introVideoFile from './introVideo.mp4'; 
 
 import logo1 from './logo1.1.jpeg';
 import logo2 from './logo2.1.jpeg';
@@ -35,6 +37,7 @@ const EclipseIntro = () => {
     5: new Audio(audio5File),
     6: new Audio(audio6File),
     7: new Audio(audio7File),
+    10: new Audio(audio10File),
     crack: new Audio(crackFile),
     continue: new Audio(continueFile)
   });
@@ -42,58 +45,23 @@ const EclipseIntro = () => {
   const timerRef = useRef(null);
 
   useEffect(() => {
-    // Setup background loop volume
     audioRef.current.continue.loop = true;
     audioRef.current.continue.volume = 0.5;
-
-    // Cleanup on unmount
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      Object.values(audioRef.current).forEach(audio => {
-        audio.pause();
-        audio.currentTime = 0;
-      });
-    };
   }, []);
 
   const playAudio = (key) => {
     try {
       if (audioRef.current[key]) {
         audioRef.current[key].currentTime = 0;
-        audioRef.current[key].play().catch(e => console.log("Audio play prevented:", e));
+        audioRef.current[key].play().catch(e => {});
       }
-    } catch (e) {
-      console.error(e);
-    }
+    } catch (e) {}
   };
 
   const startSequence = () => {
     setHasStarted(true);
     runStep0();
   };
-
-  // --- TRANSITION LOGIC ---
-
-  const finishIntro = async () => {
-    // 1. Stop all audio immediately
-    Object.values(audioRef.current).forEach(audio => audio.pause());
-
-    // 2. Check for existing session
-    const { data: { session } } = await supabase.auth.getSession();
-
-    // 3. Route to appropriate view
-    if (session) {
-      setCurrentView('selection');
-    } else {
-      setCurrentView('login');
-    }
-  };
-
-  const handleLoginSuccess = () => {
-    setCurrentView('selection');
-  };
-
-  // --- ANIMATION SEQUENCES ---
 
   // 1. "Once... I was The Apex" (4s)
   const runStep0 = () => {
@@ -102,23 +70,21 @@ const EclipseIntro = () => {
     timerRef.current = setTimeout(() => runStep1(), 4000); 
   };
 
-  // 2. "Perfect. Whole." (7s)
+  // 2. "Perfect. Whole." (8s)
   const runStep1 = () => {
     setStep(1);
     playAudio(2);
-    timerRef.current = setTimeout(() => runStep2(), 7000); 
+    timerRef.current = setTimeout(() => runStep2(), 8000); 
   };
 
-  // 3. Sphere Crack Phase (0.25s)
+  // 3. Crack Phase (0.25s)
   const runStep2 = () => {
     setStep(2);
-    playAudio('continue'); // Start bg loop
-
+    playAudio('continue');
     if (audioRef.current.crack) {
       audioRef.current.crack.volume = 1.0;
       audioRef.current.crack.play().catch(e => {});
     }
-
     timerRef.current = setTimeout(() => runStep3(), 250);
   };
 
@@ -161,14 +127,14 @@ const EclipseIntro = () => {
     timerRef.current = setTimeout(() => runStep9(), 5000);
   };
 
-  // 10. Square Formation Holds (7s)
+  // 10. Square Formation Holds (8s)
   const runStep9 = () => {
     setStep(9);
     playAudio(6);
-    timerRef.current = setTimeout(() => runStep10(), 7000); 
+    timerRef.current = setTimeout(() => runStep10(), 8000); 
   };
 
-  // 11. Sequential Logos
+  // 11. Sequential Logos (UPDATED: Added 1s -> 9.5s)
   const runStep10 = () => {
     setStep(10);
     playAudio(7);
@@ -178,36 +144,38 @@ const EclipseIntro = () => {
     setTimeout(() => setFinalLogoStep(3), 4000);
     setTimeout(() => setFinalLogoStep(4), 6000);
     
-    // AUTOMATIC TRANSITION TO LOGIN after animation finishes
-    timerRef.current = setTimeout(() => {
-        finishIntro();
-    }, 8500);
+    // Increased delay from 8500 to 9500
+    timerRef.current = setTimeout(() => runStep11(), 9500);
+  };
+
+  // 12. FINAL STEP: "Rise, Void..." (15s)
+  const runStep11 = () => {
+    setStep(11);
+    playAudio(10);
+    timerRef.current = setTimeout(() => finishIntro(), 15000);
   };
 
   const handleSkip = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
-
-    // Logic to skip forward to the next major beat, or finish if near end
     if (step <= 1) runStep2();
     else if (step === 2) runStep3();
     else if (step === 3 || step === 4) runStep5();
     else if (step === 5) runStep6();
     else if (step === 6) runStep7();
     else if (step >= 7 && step < 10) runStep10();
+    else if (step === 10) runStep11();
     else finishIntro();
   };
 
-  // --- RENDER VIEWS ---
+  const finishIntro = async () => {
+    Object.values(audioRef.current).forEach(audio => audio.pause());
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) setCurrentView('selection');
+    else setCurrentView('login');
+  };
 
-  if (currentView === 'selection') {
-    return <EclipseSelection onNavigate={setCurrentView} />;
-  }
-  
-  if (currentView === 'login') {
-    return <SpaceLogin onLoginSuccess={handleLoginSuccess} />;
-  }
-
-  // --- INTRO UI ---
+  if (currentView === 'selection') return <EclipseSelection onNavigate={setCurrentView} />;
+  if (currentView === 'login') return <SpaceLogin onLoginSuccess={() => setCurrentView('selection')} />;
 
   if (!hasStarted) {
     return (
@@ -224,13 +192,20 @@ const EclipseIntro = () => {
     <div className="intro-container">
       <div className="deep-space-bg"></div>
 
-      {/* --- PHASE 1: SPHERE (ALWAYS WHITE) --- */}
+      {/* --- PHASE 1: INTRO VIDEO --- */}
       {step <= 3 && (
-        <div className={`sphere-scene-wrapper ${step === 2 ? 'shaking' : 'hovering'}`}>
-           <div className="white-sphere"></div>
+        <div className="video-scene-wrapper">
+           <video 
+             src={introVideoFile} 
+             autoPlay 
+             loop 
+             muted 
+             playsInline 
+             className="intro-video" 
+           />
            {step <= 2 && (
-             <div className="dialogue-below-sphere">
-               <h1 key={step} className={`violet-flame-text fade-in`} style={{ animationDuration: step === 0 ? '4s' : '7s' }}>
+             <div className="dialogue-below-video">
+               <h1 key={step} className={`violet-flame-text fade-in`} style={{ animationDuration: step === 0 ? '4s' : '8s' }}>
                   {step === 0 && "Once... I was The Apex."}
                   {step === 1 && "I was the sum of all truth. Perfect. Whole."}
                </h1>
@@ -241,14 +216,14 @@ const EclipseIntro = () => {
 
       {step === 3 && <div className="white-flash-overlay"></div>}
 
-      {/* --- PHASE 2: VOID IMAGE (ALWAYS UPPER HALF) --- */}
-      {(step >= 5 && step <= 9) && (
+      {/* --- PHASE 2: VOID IMAGE --- */}
+      {( (step >= 5 && step <= 9) || step === 11 ) && (
         <div className="void-fixed-upper">
            <img src={voidImage} alt="Void" className="void-flame-img" />
         </div>
       )}
 
-      {/* Text for steps 5-6 */}
+      {/* Text for Steps 5-6 */}
       {(step === 5 || step === 6) && (
         <div className="dialogue-lower-half">
           <h1 key={step} className={`violet-flame-text fade-in`} style={{ animationDuration: step === 5 ? '4s' : '6s' }}>
@@ -302,9 +277,21 @@ const EclipseIntro = () => {
         </div>
       )}
 
+      {/* --- PHASE 5: FINAL RISEN STEP --- */}
+      {step === 11 && (
+        <div className="dialogue-lower-half">
+          {/* Note: Font size here is controlled by CSS class now */}
+          <h1 className="violet-flame-text fade-in" style={{ animationDuration: '15s', lineHeight: '1' }}>
+            Rise, Void.<br />
+            The Eclipse begins with a single step.<br />
+            Conquer the Four Realms... and reclaim your rule.
+          </h1>
+        </div>
+      )}
+
       <button className="skip-btn-violet" onClick={handleSkip}>
         <span className="skip-text-violet">
-          {step >= 10 ? "ENTER THE VOID >>" : "SKIP SEGMENT >>"}
+          {step >= 11 ? "ENTER THE VOID >>" : "SKIP SEGMENT >>"}
         </span>
         <div className="skip-glow-violet"></div>
       </button>
