@@ -62,7 +62,7 @@ const EclipseWorldMap1 = ({ onNavigate }) => {
               {/* The Orb */}
               <div 
                 className={`orb-node ${isCurrent ? 'active' : ''} ${isCompleted ? 'done' : 'locked'}`}
-                onClick={() => setActiveLevel(levelNum)}
+                onClick={() => useState(levelNum)}
               >
                 <div className="orb-inner-science">
                   {/* TEXT NAME instead of Image */}
