@@ -1,185 +1,313 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './EclipseStyles.css';
-import EclipseWorldMap from './EclipseWorldMap'; 
+import './EclipseStyles.css'; 
 import EclipseSelection from './EclipseSelection'; 
 import SpaceLogin from './SpaceLogin'; 
-import EclipseSettings from './EclipseSettings'; // Ensure this is imported
 import { supabase } from './supabaseClient';
 
-// Import your logos
-import logo1 from './logo1.jpeg';
-import logo2 from './logo2.jpeg';
-import logo3 from './logo3.jpeg';
-import logo4 from './logo4.jpeg';
-import logo5 from './logo5.jpeg';
+// --- ASSET IMPORTS ---
+import audio1File from './dialogue1.mp3'; 
+import audio2File from './dialogue2.mp3';
+import audio3File from './dialogue3.mp3'; 
+import audio4File from './dialogue4.mp3';
+import audio5File from './dialogue5.mp3'; 
+import audio6File from './dialogue6.mp3'; 
+import audio7File from './dialogue7.mp3'; 
+import crackFile from './cracksound.mp3';
+import continueFile from './continue.mp3';
+import voidImage from './voidIntro.jpeg'; 
 
-// --- SOUND ENGINE ---
-const playTypingSound = () => {
-  try {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) return;
-    const ctx = new AudioContext();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'triangle'; 
-    osc.frequency.setValueAtTime(600, ctx.currentTime); 
-    osc.frequency.linearRampToValueAtTime(100, ctx.currentTime + 0.05);
-    gain.gain.setValueAtTime(0.03, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.001, ctx.currentTime + 0.05);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.05);
-  } catch (e) {}
-};
-
-// --- TYPEWRITER COMPONENT ---
-const Typewriter = ({ text, onComplete }) => {
-  const [charIndex, setCharIndex] = useState(0);
-  const onCompleteRef = useRef(onComplete);
-  useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
-  
-  useEffect(() => {
-    setCharIndex(0); 
-    const intervalID = setInterval(() => {
-      setCharIndex((prev) => {
-        if (prev >= text.length) {
-          clearInterval(intervalID);
-          if (onCompleteRef.current) onCompleteRef.current();
-          return prev;
-        }
-        if (prev % 3 === 0) playTypingSound();
-        return prev + 1;
-      });
-    }, 35); 
-    return () => clearInterval(intervalID);
-  }, [text]); 
-
-  return (
-    <span className="glowing-text">
-      {text.slice(0, charIndex)}
-      <span className="cursor">|</span>
-    </span>
-  );
-};
+import logo1 from './logo1.1.jpeg';
+import logo2 from './logo2.1.jpeg';
+import logo3 from './logo3.1.jpeg';
+import logo4 from './logo4.1.jpeg';
 
 const EclipseIntro = () => {
-  const [step, setStep] = useState(0);
-  const [isGlitching, setIsGlitching] = useState(false);
-  const [currentView, setCurrentView] = useState('loading');
-  const [textFinished, setTextFinished] = useState(false);
+  const [currentView, setCurrentView] = useState('intro'); 
+  const [hasStarted, setHasStarted] = useState(false); 
+  const [step, setStep] = useState(0); 
+  const [finalLogoStep, setFinalLogoStep] = useState(0);
 
-  // Check auth on load
+  const audioRef = useRef({
+    1: new Audio(audio1File),
+    2: new Audio(audio2File),
+    3: new Audio(audio3File),
+    4: new Audio(audio4File),
+    5: new Audio(audio5File),
+    6: new Audio(audio6File),
+    7: new Audio(audio7File),
+    crack: new Audio(crackFile),
+    continue: new Audio(continueFile)
+  });
+  
+  const timerRef = useRef(null);
+
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setCurrentView('selection');
-      } else {
-        setCurrentView('intro');
-      }
-    });
+    // Setup background loop volume
+    audioRef.current.continue.loop = true;
+    audioRef.current.continue.volume = 0.5;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        setCurrentView('selection');
-      } else {
-        setCurrentView('intro');
-      }
-    });
-
-    return () => subscription.unsubscribe();
+    // Cleanup on unmount
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      Object.values(audioRef.current).forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+    };
   }, []);
 
-  const flow = [
-    { id: 1, text: "U have arrived. I am the Void. A weapon without a master. You are the Wielder. My purpose is now yours.", logo: logo1 },
-    { id: 2, text: "Two laws govern this world...", logo: logo2 },
-    { id: 3, text: "This is your Lifeline. Error cracks the glass. If we bleed out, we fail.", logo: logo3 },
-    { id: 4, text: "This is Stardust. The spoils of war. Conquer the Realms, and we feast.", logo: logo4 },
-    { id: 5, text: "The Pact is sealed. The Arcanum. The Aether. The Chronicles. The Lexicon. They are waiting to be broken. Choose a target.", logo: logo5 }
-  ];
-
-  const current = flow[step];
-  const progressPercent = ((step + 1) / flow.length) * 100;
-
-  // Navigation Helper
-  const navigate = (view) => setCurrentView(view);
-
-  const handleNext = () => {
-    setIsGlitching(true);
-    playTypingSound(); 
-    setTimeout(() => {
-      if (step < flow.length - 1) {
-        setStep(step + 1);
-        setIsGlitching(false);
-        setTextFinished(false); 
-      } else {
-        setCurrentView('login');
+  const playAudio = (key) => {
+    try {
+      if (audioRef.current[key]) {
+        audioRef.current[key].currentTime = 0;
+        audioRef.current[key].play().catch(e => console.log("Audio play prevented:", e));
       }
-    }, 800); 
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setCurrentView('login');
+  const startSequence = () => {
+    setHasStarted(true);
+    runStep0();
   };
 
-  if (currentView === 'loading') return <div className="eclipse-main-wrapper">Initializing...</div>;
-  if (currentView === 'map') return <EclipseWorldMap />;
-  
-  // Render Selection Page
+  // --- TRANSITION LOGIC ---
+
+  const finishIntro = async () => {
+    // 1. Stop all audio immediately
+    Object.values(audioRef.current).forEach(audio => audio.pause());
+
+    // 2. Check for existing session
+    const { data: { session } } = await supabase.auth.getSession();
+
+    // 3. Route to appropriate view
+    if (session) {
+      setCurrentView('selection');
+    } else {
+      setCurrentView('login');
+    }
+  };
+
+  const handleLoginSuccess = () => {
+    setCurrentView('selection');
+  };
+
+  // --- ANIMATION SEQUENCES ---
+
+  // 1. "Once... I was The Apex" (4s)
+  const runStep0 = () => {
+    setStep(0);
+    playAudio(1);
+    timerRef.current = setTimeout(() => runStep1(), 4000); 
+  };
+
+  // 2. "Perfect. Whole." (7s)
+  const runStep1 = () => {
+    setStep(1);
+    playAudio(2);
+    timerRef.current = setTimeout(() => runStep2(), 7000); 
+  };
+
+  // 3. Sphere Crack Phase (0.25s)
+  const runStep2 = () => {
+    setStep(2);
+    playAudio('continue'); // Start bg loop
+
+    if (audioRef.current.crack) {
+      audioRef.current.crack.volume = 1.0;
+      audioRef.current.crack.play().catch(e => {});
+    }
+
+    timerRef.current = setTimeout(() => runStep3(), 250);
+  };
+
+  // 4. Whiteout (0.75s)
+  const runStep3 = () => {
+    setStep(3); 
+    timerRef.current = setTimeout(() => runStep4(), 750);
+  };
+
+  // 5. Silence (0.5s)
+  const runStep4 = () => {
+    setStep(4);
+    timerRef.current = setTimeout(() => runStep5(), 500);
+  };
+
+  // 6. "Now... I am nothing." (4s)
+  const runStep5 = () => {
+    setStep(5);
+    playAudio(3);
+    timerRef.current = setTimeout(() => runStep6(), 4000);
+  };
+
+  // 7. "Just a shadow..." (6s)
+  const runStep6 = () => {
+    setStep(6);
+    playAudio(4);
+    timerRef.current = setTimeout(() => runStep7(), 6000);
+  };
+
+  // 8. Void Wait (1.5s)
+  const runStep7 = () => {
+    setStep(7);
+    timerRef.current = setTimeout(() => runStep8(), 1500);
+  };
+
+  // 9. Square Formation Starts (5s)
+  const runStep8 = () => {
+    setStep(8);
+    playAudio(5);
+    timerRef.current = setTimeout(() => runStep9(), 5000);
+  };
+
+  // 10. Square Formation Holds (7s)
+  const runStep9 = () => {
+    setStep(9);
+    playAudio(6);
+    timerRef.current = setTimeout(() => runStep10(), 7000); 
+  };
+
+  // 11. Sequential Logos
+  const runStep10 = () => {
+    setStep(10);
+    playAudio(7);
+    
+    setFinalLogoStep(1);
+    setTimeout(() => setFinalLogoStep(2), 2000);
+    setTimeout(() => setFinalLogoStep(3), 4000);
+    setTimeout(() => setFinalLogoStep(4), 6000);
+    
+    // AUTOMATIC TRANSITION TO LOGIN after animation finishes
+    timerRef.current = setTimeout(() => {
+        finishIntro();
+    }, 8500);
+  };
+
+  const handleSkip = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+
+    // Logic to skip forward to the next major beat, or finish if near end
+    if (step <= 1) runStep2();
+    else if (step === 2) runStep3();
+    else if (step === 3 || step === 4) runStep5();
+    else if (step === 5) runStep6();
+    else if (step === 6) runStep7();
+    else if (step >= 7 && step < 10) runStep10();
+    else finishIntro();
+  };
+
+  // --- RENDER VIEWS ---
+
   if (currentView === 'selection') {
-    return <EclipseSelection onNavigate={navigate} />;
+    return <EclipseSelection onNavigate={setCurrentView} />;
+  }
+  
+  if (currentView === 'login') {
+    return <SpaceLogin onLoginSuccess={handleLoginSuccess} />;
   }
 
-  // Render Settings Page
-  if (currentView === 'settings') {
+  // --- INTRO UI ---
+
+  if (!hasStarted) {
     return (
-      <EclipseSettings 
-        onBack={() => navigate('selection')} 
-        onLogout={handleLogout} 
-      />
+      <div className="intro-container" onClick={startSequence}>
+        <div className="start-prompt">
+          <div className="pulse-circle-violet"></div>
+          <p>TAP TO INITIALIZE</p>
+        </div>
+      </div>
     );
   }
 
-  if (currentView === 'login') return <SpaceLogin onLoginSuccess={() => setCurrentView('selection')} />;
-
   return (
-    <div className="eclipse-main-wrapper">
-      <div className="scanlines"></div>
-      <div className="stars-overlay"></div>
-      <div className={`eclipse-container ${isGlitching ? 'glitch-active' : ''}`}>
-        <div className="header-bar">
-          <div className="tech-readout">SYSTEM.CORE // {step + 1} OF 5</div>
-          <div className="progress-track">
-            <div className="progress-fill" style={{ width: `${progressPercent}%` }}></div>
-          </div>
+    <div className="intro-container">
+      <div className="deep-space-bg"></div>
+
+      {/* --- PHASE 1: SPHERE (ALWAYS WHITE) --- */}
+      {step <= 3 && (
+        <div className={`sphere-scene-wrapper ${step === 2 ? 'shaking' : 'hovering'}`}>
+           <div className="white-sphere"></div>
+           {step <= 2 && (
+             <div className="dialogue-below-sphere">
+               <h1 key={step} className={`violet-flame-text fade-in`} style={{ animationDuration: step === 0 ? '4s' : '7s' }}>
+                  {step === 0 && "Once... I was The Apex."}
+                  {step === 1 && "I was the sum of all truth. Perfect. Whole."}
+               </h1>
+             </div>
+           )}
         </div>
-        <div className="content-area">
-          <div className="character-section">
-            <div className="character-wrapper">
-                <div className="inferno-base"></div>
-                <div className="inferno-core"></div>
-                <div className="portal-ring ring-outer"></div>
-                <img src={current.logo} alt="Void" className="eclipse-logo" />
-            </div>
-            <div className="speech-container">
-              <div className="speech-header">/// TRANSMISSION_RECEIVED</div>
-              <p className="typewriter-text">
-                <Typewriter key={current.text} text={current.text} onComplete={() => setTextFinished(true)} />
-              </p>
-            </div>
-          </div>
-          <div className="actions-section">
-            <button 
-              onClick={handleNext} 
-              className={`void-button ${textFinished ? 'btn-visible' : 'btn-hidden'}`}
-              disabled={!textFinished}
-            >
-              <span className="button-content">{step === flow.length - 1 ? "INITIALIZE LINK" : "ACCEPT DATA >>"}</span>
-            </button>
-          </div>
+      )}
+
+      {step === 3 && <div className="white-flash-overlay"></div>}
+
+      {/* --- PHASE 2: VOID IMAGE (ALWAYS UPPER HALF) --- */}
+      {(step >= 5 && step <= 9) && (
+        <div className="void-fixed-upper">
+           <img src={voidImage} alt="Void" className="void-flame-img" />
         </div>
-      </div>
+      )}
+
+      {/* Text for steps 5-6 */}
+      {(step === 5 || step === 6) && (
+        <div className="dialogue-lower-half">
+          <h1 key={step} className={`violet-flame-text fade-in`} style={{ animationDuration: step === 5 ? '4s' : '6s' }}>
+            {step === 5 && "Now... I am nothing."}
+            {step === 6 && "Just a shadow. A hunger in the dark."}
+          </h1>
+        </div>
+      )}
+
+      {/* --- SQUARE FORMATION --- */}
+      {(step === 8 || step === 9) && (
+        <div className="x-formation-wrapper form-square-from-upper">
+           <img src={logo1} className="x-logo pos-tl" alt="" />
+           <img src={logo2} className="x-logo pos-tr" alt="" />
+           <img src={logo3} className="x-logo pos-bl" alt="" />
+           <img src={logo4} className="x-logo pos-br" alt="" />
+        </div>
+      )}
+
+      {/* --- SEQUENTIAL LOGOS --- */}
+      {step === 10 && (
+        <div className="sequential-logo-wrapper">
+          {finalLogoStep === 1 && (
+            <div className="seq-item">
+              <img src={logo1} className="seq-logo" alt="" />
+              <h2 className="seq-label">The Arcanum</h2>
+              <h3 className="seq-sublabel">Maths</h3>
+            </div>
+          )}
+          {finalLogoStep === 2 && (
+            <div className="seq-item">
+              <img src={logo2} className="seq-logo" alt="" />
+              <h2 className="seq-label">The Aether</h2>
+              <h3 className="seq-sublabel">Science</h3>
+            </div>
+          )}
+          {finalLogoStep === 3 && (
+            <div className="seq-item">
+              <img src={logo3} className="seq-logo" alt="" />
+              <h2 className="seq-label">The Chronicles</h2>
+              <h3 className="seq-sublabel">SST</h3>
+            </div>
+          )}
+          {finalLogoStep === 4 && (
+            <div className="seq-item">
+              <img src={logo4} className="seq-logo" alt="" />
+              <h2 className="seq-label">The Lexicon</h2>
+              <h3 className="seq-sublabel">English</h3>
+            </div>
+          )}
+        </div>
+      )}
+
+      <button className="skip-btn-violet" onClick={handleSkip}>
+        <span className="skip-text-violet">
+          {step >= 10 ? "ENTER THE VOID >>" : "SKIP SEGMENT >>"}
+        </span>
+        <div className="skip-glow-violet"></div>
+      </button>
     </div>
   );
 };
