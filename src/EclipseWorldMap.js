@@ -5,7 +5,7 @@ import voidCharacter from './logo1.jpeg';
 import EclipseNavigation from './EclipseNavigation';
 
 const EclipseWorldMap = ({ onNavigate }) => { // Prop received here
-  const [activeLevel, setActiveLevel] = useState(1); 
+  const [activeLevel] = useState(1); 
   const [isLightning, setIsLightning] = useState(false);
   
   const levels = Array.from({ length: 50 }, (_, i) => i + 1);

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
-import { Feather, Lock, Wand2, Stars, Moon } from 'lucide-react';
+import { Feather, Lock, Stars, Moon } from 'lucide-react';
 import { supabase } from './supabaseClient';
 import VoidSlime from './VoidSlime'; 
 import './SpaceLogin.css';

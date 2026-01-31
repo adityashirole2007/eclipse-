@@ -4,7 +4,7 @@ import EclipseNavigation from './EclipseNavigation';
 import voidCharacter from './logo1.jpeg'; 
 
 const EclipseWorldMap1 = ({ onNavigate }) => {
-  const [activeLevel, setActiveLevel] = useState(1); 
+  const [activeLevel] = useState(1); 
   const [isLightning, setIsLightning] = useState(false);
 
   // Define 4 levels with Names Only
