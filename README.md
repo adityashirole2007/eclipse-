@@ -68,3 +68,16 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+---
+
+## Environment variables (Supabase) ✅
+
+This project expects Supabase credentials to be provided via environment variables (Create React App convention). Create a `.env` file in the project root (don't commit it) and add the values:
+
+```
+REACT_APP_SUPABASE_URL=https://your-project.supabase.co
+REACT_APP_SUPABASE_ANON_KEY=your-anon-key
+```
+
+A sample `.env.example` file is included. After creating or changing `.env`, restart the dev server (`npm start`) so the variables are picked up.
